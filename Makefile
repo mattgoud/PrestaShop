@@ -19,6 +19,9 @@ admin-default:
 admin-new-theme:
 	./tools/assets/build.sh admin-new-theme
 
+admin-puik-theme:
+	./tools/assets/build.sh admin-puik-theme
+
 admin: admin-default admin-new-theme
 
 front: front-core front-classic

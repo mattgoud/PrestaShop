@@ -215,4 +215,7 @@ tools/build/releases/*
 install.lock
 docker-compose.override.yml
 
+# Intelij
+.idea/*
+
 /admin-dev/themes/new-theme/.npmrc
