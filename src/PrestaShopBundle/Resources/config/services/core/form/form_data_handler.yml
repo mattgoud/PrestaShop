@@ -119,6 +119,10 @@ services:
     autowire: true
     public: false
 
+  PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\FeatureValueFormDataHandler:
+    autowire: true
+    public: false
+
   prestashop.core.form.identifiable_object.data_handler.order_message_form_data_handler:
     class: 'PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\OrderMessageFormDataHandler'
     arguments:
@@ -261,6 +265,7 @@ services:
   PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\ApplicationFormDataHandler:
     arguments:
       - '@prestashop.core.command_bus'
+    autowire: true
 
   PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataHandler\TaxRulesGroupFormDataHandler:
     arguments:

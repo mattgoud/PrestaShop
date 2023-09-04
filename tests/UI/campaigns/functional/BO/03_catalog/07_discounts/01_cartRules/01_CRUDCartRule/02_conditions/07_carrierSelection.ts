@@ -12,7 +12,7 @@ import cartRulesPage from '@pages/BO/catalog/discounts';
 import addCartRulePage from '@pages/BO/catalog/discounts/add';
 import dashboardPage from '@pages/BO/dashboard';
 // Import FO pages
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import checkoutPage from '@pages/FO/checkout';
 import {homePage as foHomePage} from '@pages/FO/home';
 import foProductPage from '@pages/FO/product';
@@ -194,7 +194,7 @@ describe('BO - Catalog - Cart rules : Carrier selection', async () => {
       await checkoutPage.addPromoCode(page, newCartRuleData.code);
 
       const totalAfterDiscount = Products.demo_6.combinations[0].price
-        - newCartRuleData.discountAmount.value + Carriers.myCarrier.priceTTC;
+        - newCartRuleData.discountAmount!.value + Carriers.myCarrier.priceTTC;
 
       const priceATI = await checkoutPage.getATIPrice(page);
       await expect(priceATI.toFixed(2)).to.equal(totalAfterDiscount.toFixed(2));

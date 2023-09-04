@@ -16,7 +16,7 @@ import dashboardPage from '@pages/BO/dashboard';
 import viewCartPage from '@pages/BO/orders/shoppingCarts/view';
 import orderPageCustomerBlock from '@pages/BO/orders/view/customerBlock';
 // Import FO pages
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import checkoutPage from '@pages/FO/checkout';
 import orderConfirmationPage from '@pages/FO/checkout/orderConfirmation';
 import {homePage as foHomePage} from '@pages/FO/home';
@@ -371,7 +371,7 @@ describe('BO - Customers - Customers : View information about customer', async (
     });
 
     it('should check purchased products', async function () {
-      await testContext.addContextItem(this, 'testIdentifier', 'checkPurchasedProduct', baseContext);
+      await testContext.addContextItem(this, 'testIdentifier', 'checkPurchasedProduct1', baseContext);
 
       const viewedProduct = await viewCustomerPage.getTextFromElement(page, 'Purchased products');
       expect(viewedProduct).to.contains(Products.demo_1.name);

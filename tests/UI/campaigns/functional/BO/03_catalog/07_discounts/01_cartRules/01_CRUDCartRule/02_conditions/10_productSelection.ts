@@ -13,7 +13,7 @@ import cartRulesPage from '@pages/BO/catalog/discounts';
 import addCartRulePage from '@pages/BO/catalog/discounts/add';
 import dashboardPage from '@pages/BO/dashboard';
 // Import FO pages
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import {homePage} from '@pages/FO/home';
 import {loginPage} from '@pages/FO/login';
 import productPage from '@pages/FO/product';
@@ -182,7 +182,7 @@ describe('BO - Catalog - Cart rules : Product selection', async () => {
 
       const total = Products.demo_8.finalPrice + Products.demo_1.finalPrice + Products.demo_3.finalPrice;
 
-      const discount = await basicHelper.percentage(total, newCartRuleData.discountPercent);
+      const discount = await basicHelper.percentage(total, newCartRuleData.discountPercent!);
 
       const discountValue = await cartPage.getDiscountValue(page);
       await expect(discountValue).to.eq(-discount.toFixed(2));
@@ -202,7 +202,7 @@ describe('BO - Catalog - Cart rules : Product selection', async () => {
 
       const total = Products.demo_8.finalPrice + Products.demo_3.finalPrice;
 
-      const discount = await basicHelper.percentage(total, newCartRuleData.discountPercent);
+      const discount = await basicHelper.percentage(total, newCartRuleData.discountPercent!);
 
       const discountValue = await cartPage.getDiscountValue(page);
       await expect(discountValue).to.eq(-discount.toFixed(2));

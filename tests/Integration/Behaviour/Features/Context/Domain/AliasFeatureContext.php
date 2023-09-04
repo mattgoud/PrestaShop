@@ -31,6 +31,13 @@ namespace Tests\Integration\Behaviour\Features\Context\Domain;
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\Assert;
 use PrestaShop\PrestaShop\Core\Domain\Alias\Command\AddAliasCommand;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Command\BulkDeleteAliasCommand;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Command\BulkUpdateAliasStatusCommand;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Command\DeleteAliasCommand;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Command\UpdateAliasCommand;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Command\UpdateAliasStatusCommand;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Exception\AliasException;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Query\SearchForSearchTerm;
 use PrestaShop\PrestaShop\Core\Exception\InvalidArgumentException;
 use PrestaShop\PrestaShop\Core\Grid\Query\AliasQueryBuilder;
 use PrestaShop\PrestaShop\Core\Search\Filters;
@@ -85,7 +92,38 @@ class AliasFeatureContext extends AbstractDomainFeatureContext
         $idsByIdReferences = $this->assertAliasProperties($expectedAliases, $aliases);
 
         foreach ($idsByIdReferences as $reference => $id) {
-            $this->getSharedStorage()->set($reference, $id);
+            $this->getSharedStorage()->set($reference, (int) $id);
+        }
+    }
+
+    /**
+     * @When /^I (enable|disable) alias with reference "(.+)"$/
+     *
+     * @param bool $enable
+     * @param string $aliasReference
+     *
+     * @see StringToBoolTransformContext::transformTruthyStringToBoolean for $enable string to bool transformation
+     */
+    public function updateAliasStatus(bool $enable, string $aliasReference): void
+    {
+        $this->getCommandBus()->handle(new UpdateAliasStatusCommand(
+            $this->getSharedStorage()->get($aliasReference),
+            $enable
+        ));
+    }
+
+    /**
+     * @When /^I bulk (enable|disable) the following aliases "([^"]*)"$/
+     *
+     * @param bool $status
+     * @param string $aliasReferences
+     */
+    public function bulkUpdateStatusForDefaultShop(bool $status, string $aliasReferences): void
+    {
+        try {
+            $this->getCommandBus()->handle(new BulkUpdateAliasStatusCommand($this->referencesToIds($aliasReferences), $status));
+        } catch (AliasException $e) {
+            $this->setLastException($e);
         }
     }
 
@@ -98,6 +136,83 @@ class AliasFeatureContext extends AbstractDomainFeatureContext
     public function assertLastErrorIsInvalidAliasConstraint(): void
     {
         $this->assertLastErrorIs(InvalidArgumentException::class);
+    }
+
+    /**
+     * @When I update alias ":aliasReference" with following values:
+     *
+     * @return void
+     */
+    public function assertUpdateAlias(string $aliasReference, TableNode $table): void
+    {
+        $updateAliasCommand = $this->buildUpdateAliasCommand($aliasReference, $table);
+
+        try {
+            $this->getCommandBus()->handle($updateAliasCommand);
+        } catch (AliasException $e) {
+            $this->setLastException($e);
+        }
+    }
+
+    /**
+     * @When I delete alias :reference
+     *
+     * @param string $reference
+     */
+    public function deleteAlias(string $reference): void
+    {
+        /** @var int $aliasId */
+        $aliasId = $this->getSharedStorage()->get($reference);
+
+        try {
+            $this->getCommandBus()->handle(new DeleteAliasCommand(($aliasId)));
+        } catch (AliasException $e) {
+            $this->setLastException($e);
+        }
+    }
+
+    /**
+     * @When I bulk delete aliases :aliasReferences
+     */
+    public function bulkDeleteAlias(string $aliasReferences): void
+    {
+        try {
+            $this->getCommandBus()->handle(new BulkDeleteAliasCommand($this->referencesToIds($aliasReferences)));
+        } catch (AliasException $e) {
+            $this->setLastException($e);
+        }
+    }
+
+    /**
+     * @When I search for alias search term matching :search I should get the following results:
+     *
+     * @param string $search
+     * @param TableNode $tableNode
+     */
+    public function assertSearchAliases(string $search, TableNode $tableNode): void
+    {
+        /** @var string[] $foundAliasesForAssociation */
+        $foundAliasesForAssociation = $this->getQueryBus()->handle(new SearchForSearchTerm($search));
+        $expectedSearchTermsRows = $tableNode->getColumnsHash();
+
+        foreach ($expectedSearchTermsRows as $expectedSearchTermRow) {
+            $expectedSearchTerms = PrimitiveUtils::castStringArrayIntoArray($expectedSearchTermRow['searchTerm']);
+            Assert::assertCount(count($expectedSearchTerms), $foundAliasesForAssociation, 'Expected and found search terms count doesn\'t match');
+
+            foreach ($expectedSearchTerms as $index => $searchTerm) {
+                $foundAliasSearchTerm = $foundAliasesForAssociation[$index];
+
+                Assert::assertEquals(
+                    $searchTerm,
+                    $foundAliasSearchTerm,
+                    sprintf(
+                        'Invalid Alias Search Term, expected %d but got %d instead.',
+                        $searchTerm,
+                        $foundAliasSearchTerm
+                    )
+                );
+            }
+        }
     }
 
     /**
@@ -132,11 +247,36 @@ class AliasFeatureContext extends AbstractDomainFeatureContext
                 'Unexpected alias reference'
             );
 
-            if (!empty($expectedAlias['id reference'])) {
+            if (isset($expectedAlias['active'])) {
+                Assert::assertSame(
+                    (int) $alias['active'],
+                    (int) $expectedAlias['active'],
+                    'Unexpected alias active field'
+                );
+            }
+
+            if (isset($expectedAlias['id reference'])) {
                 $idsByIdReferences[$expectedAlias['id reference']] = $alias['id_alias'];
             }
         }
 
         return $idsByIdReferences;
+    }
+
+    private function buildUpdateAliasCommand(string $aliasReference, TableNode $table): UpdateAliasCommand
+    {
+        $data = $table->getRowsHash();
+        $aliasId = $this->getSharedStorage()->get($aliasReference);
+        $aliases = [];
+        $searchTerm = '';
+
+        if (isset($data['aliases'])) {
+            $aliases = PrimitiveUtils::castStringArrayIntoArray($data['aliases']);
+        }
+        if (isset($data['search'])) {
+            $searchTerm = $data['search'];
+        }
+
+        return new UpdateAliasCommand($aliasId, $aliases, $searchTerm);
     }
 }

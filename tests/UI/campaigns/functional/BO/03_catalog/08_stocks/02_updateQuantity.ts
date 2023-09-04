@@ -84,8 +84,8 @@ describe('BO - Catalog - Stocks : Update Quantity', async () => {
 
         // Get physical and available quantities of product
         productStock.stocks = {
-          physical: await stocksPage.getTextColumnFromTableStocks(page, 1, 'physical'),
-          available: await stocksPage.getTextColumnFromTableStocks(page, 1, 'available'),
+          physical: parseInt(await stocksPage.getTextColumnFromTableStocks(page, 1, 'physical'), 10),
+          available: parseInt(await stocksPage.getTextColumnFromTableStocks(page, 1, 'available'), 10),
         };
 
         await expect(productStock.stocks.physical).to.be.above(0);
@@ -126,8 +126,8 @@ describe('BO - Catalog - Stocks : Update Quantity', async () => {
         const numberOfMovements = await movementsPage.getNumberOfElementInGrid(page);
         await expect(numberOfMovements).to.be.at.least(1);
 
-        const productName = await movementsPage.getTextColumnFromTable(page, numberOfMovements, 'name');
-        await expect(productName).to.equal(productStock.name);
+        const productName = await movementsPage.getTextColumnFromTable(page, numberOfMovements, 'product_name');
+        await expect(productName).to.contain(productStock.name);
 
         // Check movement quantity
         const movementQuantity = await movementsPage.getTextColumnFromTable(page, numberOfMovements, 'quantity');

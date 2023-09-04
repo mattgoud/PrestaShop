@@ -1,9 +1,11 @@
 // Import utils
 import basicHelper from '@utils/basicHelper';
 import helper from '@utils/helpers';
+import mailHelper from '@utils/mailHelper';
 import testContext from '@utils/testContext';
 
 // Import common tests
+import {resetSmtpConfigTest, setupSmtpConfigTest} from '@commonTests/BO/advancedParameters/smtp';
 import {createCartRuleTest, deleteCartRuleTest} from '@commonTests/BO/catalog/cartRule';
 import loginCommon from '@commonTests/BO/loginBO';
 
@@ -22,9 +24,11 @@ import OrderStatuses from '@data/demo/orderStatuses';
 import PaymentMethods from '@data/demo/paymentMethods';
 import Products from '@data/demo/products';
 import CartRuleData from '@data/faker/cartRule';
+import type MailDevEmail from '@data/types/maildevEmail';
 
 import {expect} from 'chai';
 import type {BrowserContext, Page} from 'playwright';
+import type MailDev from 'maildev';
 
 const baseContext: string = 'functional_BO_orders_orders_createOrders_checkSummary';
 
@@ -43,6 +47,8 @@ Post-condition:
 describe('BO - Orders - Create order : Check summary', async () => {
   let browserContext: BrowserContext;
   let page: Page;
+  let newMail: MailDevEmail;
+  let mailListener: MailDev;
 
   // Data to create cart rule with code
   const cartRuleWithCodeData: CartRuleData = new CartRuleData({
@@ -61,13 +67,28 @@ describe('BO - Orders - Create order : Check summary', async () => {
   // Pre-condition: Create cart rule with code
   createCartRuleTest(cartRuleWithCodeData, `${baseContext}_preTest_1`);
 
+  // Pre-Condition: Setup config SMTP
+  setupSmtpConfigTest(`${baseContext}_preTest_2`);
+
   before(async function () {
     browserContext = await helper.createBrowserContext(this.browser);
     page = await helper.newTab(browserContext);
+
+    // Start listening to maildev server
+    mailListener = mailHelper.createMailListener();
+    mailHelper.startListener(mailListener);
+
+    // Handle every new email
+    mailListener.on('new', (email: MailDevEmail) => {
+      newMail = email;
+    });
   });
 
   after(async () => {
     await helper.closeBrowserContext(browserContext);
+
+    // Stop listening to maildev server
+    mailHelper.stopListener(mailListener);
   });
 
   // 1 - Go to create order page and add product to cart
@@ -166,7 +187,7 @@ describe('BO - Orders - Create order : Check summary', async () => {
         const result = await addOrderPage.getVoucherDetailsFromTable(page);
         await Promise.all([
           expect(result.name).to.contains(cartRuleWithCodeData.name),
-          expect(result.value).to.equal(cartRuleWithCodeData.discountAmount.value),
+          expect(result.value).to.equal(cartRuleWithCodeData.discountAmount!.value),
         ]);
       });
 
@@ -174,16 +195,16 @@ describe('BO - Orders - Create order : Check summary', async () => {
         await testContext.addContextItem(this, 'testIdentifier', 'checkSummaryBlock2', baseContext);
 
         const totalTaxes = await basicHelper.percentage(
-          Products.demo_12.priceTaxExcluded - cartRuleWithCodeData.discountAmount.value,
+          Products.demo_12.priceTaxExcluded - cartRuleWithCodeData.discountAmount!.value,
           20,
         );
-        const totalTaxExcluded = Products.demo_12.priceTaxExcluded - cartRuleWithCodeData.discountAmount.value;
+        const totalTaxExcluded = Products.demo_12.priceTaxExcluded - cartRuleWithCodeData.discountAmount!.value;
         const totalTaxIncluded = totalTaxes + totalTaxExcluded;
 
         const result = await addOrderPage.getSummaryDetails(page);
         await Promise.all([
           expect(result.totalProducts).to.equal(`€${Products.demo_12.priceTaxExcluded.toFixed(2)}`),
-          expect(result.totalVouchers).to.equal(`-€${cartRuleWithCodeData.discountAmount.value.toFixed(2)}`),
+          expect(result.totalVouchers).to.equal(`-€${cartRuleWithCodeData.discountAmount!.value.toFixed(2)}`),
           expect(result.totalShipping).to.equal('€0.00'),
           expect(result.totalTaxes).to.equal(`€${totalTaxes.toFixed(2)}`),
           expect(result.totalTaxExcluded).to.equal(`€${totalTaxExcluded.toFixed(2)}`),
@@ -244,14 +265,21 @@ describe('BO - Orders - Create order : Check summary', async () => {
       it('should choose \'Send pre-filled order to the customer by email\' from more actions', async function () {
         await testContext.addContextItem(this, 'testIdentifier', 'setMoreActions', baseContext);
 
-        const textMessage = await addOrderPage.setMoreActions(page, 'pre-filled order');
+        const textMessage = await addOrderPage.setMoreActionsPreFilledOrder(page);
         await expect(textMessage, 'Invalid success message!').to.be.equal(addOrderPage.emailSendSuccessMessage);
+      });
+
+      it('should check if the mail is in mailbox', async function () {
+        await testContext.addContextItem(this, 'testIdentifier', 'checkIfMailIsInMailbox', baseContext);
+
+        await expect(newMail.subject).to.eq(`[${global.INSTALL.SHOP_NAME}] Process the payment of your order`);
+        await expect(newMail.text).to.contains('A new order has been generated on your behalf.');
       });
 
       it('should choose \'Proceed to checkout in the front office\' from more actions', async function () {
         await testContext.addContextItem(this, 'testIdentifier', 'proceedToCheckout', baseContext);
 
-        page = await addOrderPage.setMoreActions(page, 'Proceed to checkout');
+        page = await addOrderPage.setMoreActionsProceedToCheckout(page);
 
         const isCheckoutPage = await checkoutPage.isCheckoutPage(page);
         await expect(isCheckoutPage, 'Not redirected to checkout page!').to.be.true;
@@ -318,4 +346,7 @@ describe('BO - Orders - Create order : Check summary', async () => {
 
   // Post-condition: Delete created cart rule
   deleteCartRuleTest(cartRuleWithCodeData.name, `${baseContext}_postTest_1`);
+
+  // Post-Condition: Reset SMTP config
+  resetSmtpConfigTest(`${baseContext}_postTest_2`);
 });

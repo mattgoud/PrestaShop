@@ -8,7 +8,7 @@ import loginCommon from '@commonTests/BO/loginBO';
 // Import BO pages
 import customersPage from '@pages/BO/customers';
 import dashboardPage from '@pages/BO/dashboard';
-import moduleManagerPage from '@pages/BO/modules/moduleManager';
+import {moduleManager as moduleManagerPage} from '@pages/BO/modules/moduleManager';
 import psEmailSubscriptionPage from '@pages/BO/modules/psEmailSubscription';
 
 // Import data
@@ -100,7 +100,7 @@ describe('BO - Customers - Customers : Check customer subscription to newsletter
 
       // Search and go to configure module page
       await moduleManagerPage.searchModule(page, Modules.psEmailSubscription);
-      await moduleManagerPage.goToConfigurationPage(page, Modules.psEmailSubscription.name);
+      await moduleManagerPage.goToConfigurationPage(page, Modules.psEmailSubscription.tag);
 
       const pageTitle = await psEmailSubscriptionPage.getPageSubtitle(page);
       await expect(pageTitle).to.contains(Modules.psEmailSubscription.name);

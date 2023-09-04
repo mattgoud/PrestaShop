@@ -32,36 +32,26 @@ use Alias;
 use Doctrine\DBAL\Connection;
 use PrestaShop\PrestaShop\Adapter\Alias\Validate\AliasValidator;
 use PrestaShop\PrestaShop\Core\Domain\Alias\Exception\AliasNotFoundException;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Exception\BulkAliasException;
 use PrestaShop\PrestaShop\Core\Domain\Alias\Exception\CannotAddAliasException;
+use PrestaShop\PrestaShop\Core\Domain\Alias\Exception\CannotDeleteAliasException;
 use PrestaShop\PrestaShop\Core\Domain\Alias\ValueObject\AliasId;
+use PrestaShop\PrestaShop\Core\Domain\Feature\Exception\BulkFeatureException;
 use PrestaShop\PrestaShop\Core\Exception\CoreException;
 use PrestaShop\PrestaShop\Core\Repository\AbstractObjectModelRepository;
 
 class AliasRepository extends AbstractObjectModelRepository
 {
     /**
-     * @var Connection
+     * @param Connection $connection
+     * @param string $dbPrefix
+     * @param AliasValidator $aliasValidator
      */
-    private $connection;
-
-    /**
-     * @var string
-     */
-    private $dbPrefix;
-
-    /**
-     * @var AliasValidator
-     */
-    private $aliasValidator;
-
     public function __construct(
-        Connection $connection,
-        string $dbPrefix,
-        AliasValidator $aliasValidator
+        protected Connection $connection,
+        protected string $dbPrefix,
+        protected AliasValidator $aliasValidator
     ) {
-        $this->aliasValidator = $aliasValidator;
-        $this->connection = $connection;
-        $this->dbPrefix = $dbPrefix;
     }
 
     /**
@@ -69,12 +59,13 @@ class AliasRepository extends AbstractObjectModelRepository
      *
      * @param string $searchTerm
      * @param string[] $aliases
+     * @param bool $active
      *
      * @return AliasId[]
      *
      * @throws CoreException
      */
-    public function create(string $searchTerm, array $aliases): array
+    public function create(string $searchTerm, array $aliases, bool $active = true): array
     {
         $aliasIds = [];
 
@@ -87,7 +78,7 @@ class AliasRepository extends AbstractObjectModelRepository
             $alias = new Alias();
             $alias->search = $searchTerm;
             $alias->alias = $searchAlias;
-            $alias->active = true;
+            $alias->active = $active;
             $this->aliasValidator->validate($alias);
 
             $this->addObjectModel($alias, CannotAddAliasException::class);
@@ -150,5 +141,82 @@ class AliasRepository extends AbstractObjectModelRepository
         ;
 
         return $qb->execute()->fetchFirstColumn();
+    }
+
+    public function delete(AliasId $aliasId): void
+    {
+        $this->deleteObjectModel($this->get($aliasId), CannotDeleteAliasException::class);
+    }
+
+    /**
+     * @param Alias $alias
+     * @param string[] $propertiesToUpdate
+     * @param string $exceptionClass
+     *
+     * @return void
+     */
+    public function partialUpdate(Alias $alias, array $propertiesToUpdate, string $exceptionClass): void
+    {
+        $this->aliasValidator->validate($alias);
+        $this->partiallyUpdateObjectModel($alias, $propertiesToUpdate, $exceptionClass);
+    }
+
+    /**
+     * Deletes all related aliases
+     *
+     * @param string $searchTerm
+     */
+    public function deleteAliasesBySearchTerm(string $searchTerm): void
+    {
+        $exceptions = [];
+
+        $aliasIds = $this->connection->createQueryBuilder()
+            ->addSelect('a.id_alias')
+            ->from($this->dbPrefix . 'alias', 'a')
+            ->where('a.search = :searchTerm')
+            ->setParameter('searchTerm', $searchTerm)
+            ->execute()
+            ->fetchFirstColumn()
+        ;
+
+        if (empty($aliasIds)) {
+            return;
+        }
+
+        foreach ($aliasIds as $currentAliasId) {
+            try {
+                $this->deleteObjectModel($this->get(new AliasId((int) $currentAliasId)), CannotDeleteAliasException::class);
+            } catch (CannotDeleteAliasException $e) {
+                $exceptions[] = $e;
+            }
+        }
+
+        if (!empty($exceptions)) {
+            throw new BulkAliasException(
+                $exceptions,
+                'Errors occurred during Alias bulk delete action',
+                BulkFeatureException::FAILED_BULK_DELETE
+            );
+        }
+    }
+
+    /**
+     * @param string $searchPhrase
+     * @param int|null $limit
+     *
+     * @return array<int, array<string, string>>
+     */
+    public function searchSearchTerms(string $searchPhrase, ?int $limit = null): array
+    {
+        return $this->connection->createQueryBuilder()
+            ->addSelect('a.search')
+            ->from($this->dbPrefix . 'alias', 'a')
+            ->addOrderBy('a.search', 'ASC')
+            ->addGroupBy('a.search')
+            ->setMaxResults($limit)
+            ->where('a.search LIKE :searchPhrase')
+            ->setParameter('searchPhrase', '%' . $searchPhrase . '%')
+            ->execute()
+            ->fetchAllAssociative();
     }
 }

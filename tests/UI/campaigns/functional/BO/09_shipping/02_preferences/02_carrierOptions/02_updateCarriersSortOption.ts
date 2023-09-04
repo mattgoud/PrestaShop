@@ -12,7 +12,7 @@ import dashboardPage from '@pages/BO/dashboard';
 import carriersPage from '@pages/BO/shipping/carriers';
 import preferencesPage from '@pages/BO/shipping/preferences';
 // Import FO pages
-import foCartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import foCheckoutPage from '@pages/FO/checkout';
 import {homePage as foHomePage} from '@pages/FO/home';
 import foProductPage from '@pages/FO/product';
@@ -98,11 +98,7 @@ describe('BO - Shipping - Preferences : Update \'sort carriers by\' and \'Order 
         const isActionPerformed = await carriersPage.setStatus(page, 1, true);
 
         if (isActionPerformed) {
-          const resultMessage = await carriersPage.getTextContent(
-            page,
-            carriersPage.alertSuccessBlock,
-          );
-
+          const resultMessage = await carriersPage.getAlertSuccessBlockContent(page);
           await expect(resultMessage).to.contains(carriersPage.successfulUpdateStatusMessage);
         }
 
@@ -173,7 +169,7 @@ describe('BO - Shipping - Preferences : Update \'sort carriers by\' and \'Order 
         // Add the product to the cart
         await foProductPage.addProductToTheCart(page);
         // Proceed to checkout the shopping cart
-        await foCartPage.clickOnProceedToCheckout(page);
+        await cartPage.clickOnProceedToCheckout(page);
         // Checkout the order
         if (index === 0) {
           // Personal information step - Login
@@ -191,7 +187,7 @@ describe('BO - Shipping - Preferences : Update \'sort carriers by\' and \'Order 
 
         if (test.args.sortBy === 'Price') {
           const sortedCarriers = await foCheckoutPage.getAllCarriersPrices(page);
-          const expectedResult = await basicHelper.sortArrayNumber(sortedCarriers);
+          const expectedResult = await basicHelper.sortArray(sortedCarriers);
 
           if (test.args.orderBy === 'Ascending') {
             await expect(sortedCarriers).to.deep.equal(expectedResult);
@@ -250,11 +246,7 @@ describe('BO - Shipping - Preferences : Update \'sort carriers by\' and \'Order 
         const isActionPerformed = await carriersPage.setStatus(page, 1, false);
 
         if (isActionPerformed) {
-          const resultMessage = await carriersPage.getTextContent(
-            page,
-            carriersPage.alertSuccessBlock,
-          );
-
+          const resultMessage = await carriersPage.getAlertSuccessBlockContent(page);
           await expect(resultMessage).to.contains(carriersPage.successfulUpdateStatusMessage);
         }
 

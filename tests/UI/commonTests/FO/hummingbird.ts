@@ -15,7 +15,7 @@ function installHummingbird(baseContext: string = 'commonTests-installHummingbir
     let browserContext: BrowserContext;
     let page: Page;
 
-    const urlTheme: string = 'https://github.com/PrestaShop/hummingbird/releases/download/v0.1.5/hummingbird.zip';
+    const urlTheme: string = 'https://github.com/PrestaShop/hummingbird/releases/download/v0.1.6/hummingbird.zip';
 
     // before and after functions
     before(async function () {
@@ -60,7 +60,7 @@ function installHummingbird(baseContext: string = 'commonTests-installHummingbir
     it('should import from the web the Hummingbird theme', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'importTheme', baseContext);
 
-      await themeImportPage.importTheme(page, urlTheme);
+      await themeImportPage.importFromWeb(page, urlTheme);
 
       const pageTitle = await themeAndLogoPage.getPageTitle(page);
       await expect(pageTitle).to.contains(themeAndLogoPage.pageTitle);

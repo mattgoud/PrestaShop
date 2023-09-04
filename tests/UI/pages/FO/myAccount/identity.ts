@@ -93,7 +93,7 @@ class AccountIdentity extends FOBasePage {
    * @returns {Promise<string>}
    */
   async editAccount(page: Page, oldPassword: string, customer: any): Promise<string> {
-    await page.$eval(this.genderRadioButton(customer.socialTitle === 'Mr.' ? 1 : 2), (el) => el.click());
+    await page.$eval(this.genderRadioButton(customer.socialTitle === 'Mr.' ? 1 : 2), (el: HTMLElement) => el.click());
     await this.setValue(page, this.firstNameInput, customer.firstName);
     await this.setValue(page, this.lastNameInput, customer.lastName);
     await this.setValue(page, this.newEmailInput, customer.email);
@@ -111,7 +111,7 @@ class AccountIdentity extends FOBasePage {
       await this.setChecked(page, this.psgdprCheckbox);
     }
 
-    await this.clickAndWaitForNavigation(page, this.saveButton);
+    await this.clickAndWaitForLoadState(page, this.saveButton);
 
     return this.getTextContent(page, this.notificationsBlock);
   }
@@ -158,7 +158,7 @@ class AccountIdentity extends FOBasePage {
     }
     await page.click(this.newsletterCheckbox);
 
-    await this.clickAndWaitForNavigation(page, this.saveButton);
+    await this.clickAndWaitForLoadState(page, this.saveButton);
 
     return this.getTextContent(page, this.alertSuccessBlock);
   }

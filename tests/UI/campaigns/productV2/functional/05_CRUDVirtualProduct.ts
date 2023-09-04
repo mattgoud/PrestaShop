@@ -1,11 +1,13 @@
-import type {BrowserContext, Page} from 'playwright';
-import {expect} from 'chai';
-
 // Import utils
 import helper from '@utils/helpers';
 import basicHelper from '@utils/basicHelper';
 import files from '@utils/files';
+import mailHelper from '@utils/mailHelper';
 import testContext from '@utils/testContext';
+
+// Import common tests
+import {resetSmtpConfigTest, setupSmtpConfigTest} from '@commonTests/BO/advancedParameters/smtp';
+import loginCommon from '@commonTests/BO/loginBO';
 
 // Import pages
 import dashboardPage from '@pages/BO/dashboard';
@@ -14,33 +16,33 @@ import productsPage from '@pages/BO/catalog/productsV2';
 import ordersPage from '@pages/BO/orders';
 import {homePage} from '@pages/FO/home';
 import foProductPage from '@pages/FO/product';
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import checkoutPage from '@pages/FO/checkout';
 import orderConfirmationPage from '@pages/FO/checkout/orderConfirmation';
-import foMyAccountPage from '@pages/FO/myAccount';
+import {myAccountPage} from '@pages/FO/myAccount';
 import foOrderHistoryPage from '@pages/FO/myAccount/orderHistory';
 import orderDetailsPage from '@pages/FO/myAccount/orderDetails';
-
-// Import common tests
-import loginCommon from '@commonTests/BO/loginBO';
-import {
-  enableNewProductPageTest,
-  resetNewProductPageAsDefault,
-} from '@commonTests/BO/advancedParameters/newFeatures';
 
 // Import data
 import OrderStatuses from '@data/demo/orderStatuses';
 import Customers from '@data/demo/customers';
 import PaymentMethods from '@data/demo/paymentMethods';
 import ProductData from '@data/faker/product';
+import type MailDevEmail from '@data/types/maildevEmail';
+
+import type {BrowserContext, Page} from 'playwright';
+import {expect} from 'chai';
+import type MailDev from 'maildev';
 
 const baseContext: string = 'productV2_functional_CRUDVirtualProduct';
 
 describe('BO - Catalog - Products : CRUD virtual product', async () => {
   let browserContext: BrowserContext;
   let page: Page;
+  let mailListener: MailDev;
 
   // Data to create standard product
+  const mails: MailDevEmail[] = [];
   const newProductData: ProductData = new ProductData({
     type: 'virtual',
     coverImage: 'cover.jpg',
@@ -64,23 +66,43 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
     status: true,
   });
 
-  // Pre-condition: Enable new product page
-  enableNewProductPageTest(`${baseContext}_enableNewProduct`);
+  // Pre-Condition: Setup config SMTP
+  setupSmtpConfigTest(`${baseContext}_preTest_1`);
 
   // before and after functions
   before(async function () {
     browserContext = await helper.createBrowserContext(this.browser);
     page = await helper.newTab(browserContext);
-    await files.generateImage(newProductData.coverImage);
-    await files.generateImage(newProductData.thumbImage);
+    if (newProductData.coverImage) {
+      await files.generateImage(newProductData.coverImage);
+    }
+    if (newProductData.thumbImage) {
+      await files.generateImage(newProductData.thumbImage);
+    }
     await files.generateImage(newProductData.fileName);
+
+    // Start listening to maildev server
+    mailListener = mailHelper.createMailListener();
+    mailHelper.startListener(mailListener);
+
+    // Handle every new email
+    mailListener.on('new', (email: MailDevEmail) => {
+      mails.push(email);
+    });
   });
 
   after(async () => {
     await helper.closeBrowserContext(browserContext);
-    await files.deleteFile(newProductData.coverImage);
-    await files.deleteFile(newProductData.thumbImage);
+    if (newProductData.coverImage) {
+      await files.deleteFile(newProductData.coverImage);
+    }
+    if (newProductData.thumbImage) {
+      await files.deleteFile(newProductData.thumbImage);
+    }
     await files.deleteFile(newProductData.fileName);
+
+    // Stop listening to maildev server
+    mailHelper.stopListener(mailListener);
   });
 
   // 1 - Create product
@@ -153,7 +175,7 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
 
       const taxValue: number = await basicHelper.percentage(newProductData.price, newProductData.tax);
 
-      const productHeaderSummary: object = await createProductsPage.getProductHeaderSummary(page);
+      const productHeaderSummary = await createProductsPage.getProductHeaderSummary(page);
       await Promise.all([
         expect(productHeaderSummary.priceTaxExc).to.equal(`€${(newProductData.price.toFixed(2))} tax excl.`),
         expect(productHeaderSummary.priceTaxIncl).to.equal(
@@ -187,7 +209,7 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
 
       const taxValue: number = await basicHelper.percentage(newProductData.price, newProductData.tax);
 
-      const result: object = await foProductPage.getProductInformation(page);
+      const result = await foProductPage.getProductInformation(page);
       await Promise.all([
         await expect(result.name).to.equal(newProductData.name),
         await expect(result.price.toFixed(2)).to.equal((newProductData.price + taxValue).toFixed(2)),
@@ -222,7 +244,7 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
         await testContext.addContextItem(this, 'testIdentifier', 'goToPaymentStep', baseContext);
 
         // Address step - Go to delivery step
-        const isStepAddressComplete: string = await checkoutPage.goToDeliveryStep(page);
+        const isStepAddressComplete = await checkoutPage.goToDeliveryStep(page);
         await expect(isStepAddressComplete, 'Step Address is not complete').to.be.true;
       });
 
@@ -243,7 +265,7 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
         // Go back to BO
         page = await foProductPage.closePage(browserContext, page, 0);
 
-        const pageTitle: object = await createProductsPage.getPageTitle(page);
+        const pageTitle = await createProductsPage.getPageTitle(page);
         await expect(pageTitle).to.contains(createProductsPage.pageTitle);
       });
 
@@ -281,16 +303,17 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
         await testContext.addContextItem(this, 'testIdentifier', 'goToAccountPage', baseContext);
 
         await homePage.goToMyAccountPage(page);
-        const pageTitle: string = await foMyAccountPage.getPageTitle(page);
-        await expect(pageTitle).to.equal(foMyAccountPage.pageTitle);
+
+        const pageTitle = await myAccountPage.getPageTitle(page);
+        await expect(pageTitle).to.equal(myAccountPage.pageTitle);
       });
 
       it('should go to order history page', async function () {
         await testContext.addContextItem(this, 'testIdentifier', 'goToOrderHistoryPage', baseContext);
 
-        await foMyAccountPage.goToHistoryAndDetailsPage(page);
+        await myAccountPage.goToHistoryAndDetailsPage(page);
 
-        const pageHeaderTitle: string = await foOrderHistoryPage.getPageTitle(page);
+        const pageHeaderTitle = await foOrderHistoryPage.getPageTitle(page);
         await expect(pageHeaderTitle).to.equal(foOrderHistoryPage.pageTitle);
       });
 
@@ -310,6 +333,20 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
 
         const doesFileExist: boolean = await files.doesFileExist(newProductData.fileName, 5000);
         await expect(doesFileExist, 'File is not downloaded!').to.be.true;
+      });
+
+      it('should check if the mail is in mailbox', async function () {
+        await testContext.addContextItem(this, 'testIdentifier', 'checkIfMailIsInMailbox', baseContext);
+
+        // 0 : [Mon Shop] Awaiting bank wire payment
+        // 1 : [Mon Shop] Order confirmation
+        // 2 : [Mon Shop] The virtual product that you bought is available for download
+        // 3 : [Mon Shop] Payment accepted
+        expect(mails.length).to.be.gte(3);
+        expect(mails[2].subject).to.be.equal(
+          `[${global.INSTALL.SHOP_NAME}] The virtual product that you bought is available for download`,
+        );
+        expect(mails[2].text).to.contains('Product(s) to download');
       });
     });
   });
@@ -362,7 +399,7 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
 
       const taxValue: number = await basicHelper.percentage(editProductData.price, editProductData.tax);
 
-      const productHeaderSummary: object = await createProductsPage.getProductHeaderSummary(page);
+      const productHeaderSummary = await createProductsPage.getProductHeaderSummary(page);
       await Promise.all([
         expect(productHeaderSummary.priceTaxExc).to.equal(`€${(editProductData.price.toFixed(2))} tax excl.`),
         expect(productHeaderSummary.priceTaxIncl).to.equal(
@@ -392,7 +429,7 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
 
       const taxValue: number = await basicHelper.percentage(editProductData.price, editProductData.tax);
 
-      const result: object = await foProductPage.getProductInformation(page);
+      const result = await foProductPage.getProductInformation(page);
       await Promise.all([
         await expect(result.name).to.equal(editProductData.name),
         await expect(result.price.toFixed(2)).to.equal((editProductData.price + taxValue).toFixed(2)),
@@ -421,6 +458,6 @@ describe('BO - Catalog - Products : CRUD virtual product', async () => {
     });
   });
 
-  // Post-condition: Reset initial state
-  resetNewProductPageAsDefault(`${baseContext}_resetNewProduct`);
+  // Post-Condition: Reset SMTP config
+  resetSmtpConfigTest(`${baseContext}_postTest_1`);
 });

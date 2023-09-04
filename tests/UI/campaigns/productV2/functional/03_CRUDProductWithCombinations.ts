@@ -1,6 +1,3 @@
-import {expect} from 'chai';
-import type {BrowserContext, Page} from 'playwright';
-
 // Import utils
 import helper from '@utils/helpers';
 import testContext from '@utils/testContext';
@@ -10,10 +7,6 @@ import basicHelper from '@utils/basicHelper';
 
 // Import common tests
 import loginCommon from '@commonTests/BO/loginBO';
-import {
-  enableNewProductPageTest,
-  resetNewProductPageAsDefault,
-} from '@commonTests/BO/advancedParameters/newFeatures';
 
 // Import pages
 import dashboardPage from '@pages/BO/dashboard';
@@ -26,6 +19,14 @@ import foProductPage from '@pages/FO/product';
 
 // Import data
 import ProductData from '@data/faker/product';
+import type {
+  ProductAttributes,
+  ProductCombinationBulk,
+  ProductCombinationOptions,
+} from '@data/types/product';
+
+import {expect} from 'chai';
+import type {BrowserContext, Page} from 'playwright';
 
 const baseContext: string = 'productV2_functional_CRUDProductWithCombinations';
 
@@ -56,28 +57,26 @@ describe('BO - Catalog - Products : CRUD product with combinations', async () =>
   });
 
   // Data after delete the first attribute
-  const editProductAttributesData = {
-    attributes: [
-      {
-        name: 'size',
-        values: ['S', 'M', 'L', 'XL'],
-      },
-      {
-        name: 'color',
-        values: ['Taupe', 'Beige', 'White', 'Red', 'Black', 'Orange', 'Green', 'Yellow', 'Brown'],
-      },
-    ],
-  };
+  const editProductAttributesData: ProductAttributes[] = [
+    {
+      name: 'size',
+      values: ['S', 'M', 'L', 'XL'],
+    },
+    {
+      name: 'color',
+      values: ['Taupe', 'Beige', 'White', 'Red', 'Black', 'Orange', 'Green', 'Yellow', 'Brown'],
+    },
+  ];
 
   // Data to edit the first combination
-  const firstCombinationData: object = {
+  const firstCombinationData: ProductCombinationOptions = {
     reference: 'abcd',
     impactOnPriceTExc: 25,
     quantity: 100,
   };
 
   // Data to edit the second combination
-  const secondCombinationData: object = {
+  const secondCombinationData: ProductCombinationOptions = {
     reference: 'efghigk',
     minimalQuantity: 2,
     impactOnPriceTExc: 20,
@@ -85,7 +84,7 @@ describe('BO - Catalog - Products : CRUD product with combinations', async () =>
   };
 
   // Data to edit the stock of combinations by bulk actions
-  const editStockData: object = {
+  const editStockData: ProductCombinationBulk = {
     stocks: {
       quantityToEnable: true,
       quantity: 20,
@@ -109,11 +108,11 @@ describe('BO - Catalog - Products : CRUD product with combinations', async () =>
   };
 
   // Data to edit the product price
-  const pricingData: object = {
-    price: 15,
+  const pricingData: ProductData = new ProductData({
+    priceTaxExcluded: 15,
     taxRule: 'FR Taux standard (20%)',
-    priceTaxIncl: 18,
-  };
+    price: 18,
+  });
 
   // Data to edit the product with combinations
   const editProductData: ProductData = new ProductData({
@@ -134,21 +133,26 @@ describe('BO - Catalog - Products : CRUD product with combinations', async () =>
     ],
   });
 
-  // Pre-condition: Enable new product page
-  enableNewProductPageTest(`${baseContext}_enableNewProduct`);
-
   // before and after functions
   before(async function () {
     browserContext = await helper.createBrowserContext(this.browser);
     page = await helper.newTab(browserContext);
-    await files.generateImage(newProductData.coverImage);
-    await files.generateImage(newProductData.thumbImage);
+    if (newProductData.coverImage) {
+      await files.generateImage(newProductData.coverImage);
+    }
+    if (newProductData.thumbImage) {
+      await files.generateImage(newProductData.thumbImage);
+    }
   });
 
   after(async () => {
     await helper.closeBrowserContext(browserContext);
-    await files.deleteFile(newProductData.coverImage);
-    await files.deleteFile(newProductData.thumbImage);
+    if (newProductData.coverImage) {
+      await files.deleteFile(newProductData.coverImage);
+    }
+    if (newProductData.thumbImage) {
+      await files.deleteFile(newProductData.thumbImage);
+    }
   });
 
   describe('Create product', async () => {
@@ -569,7 +573,7 @@ describe('BO - Catalog - Products : CRUD product with combinations', async () =>
         await expect(productAttributes[0].name).to.equal(newProductData.attributes[0].name),
         await expect(productAttributes[0].value).to.equal(newProductData.attributes[0].values.join(' ')),
         await expect(productAttributes[1].name).to.equal(newProductData.attributes[1].name),
-        await expect(productAttributes[1].value).to.equal(editProductAttributesData.attributes[1].values.join(' ')),
+        await expect(productAttributes[1].value).to.equal(editProductAttributesData[1].values.join(' ')),
       ]);
     });
   });
@@ -649,10 +653,10 @@ describe('BO - Catalog - Products : CRUD product with combinations', async () =>
 
       const productAttributes = await foProductPage.getProductAttributes(page);
       await Promise.all([
-        await expect(productAttributes[0].name).to.equal(editProductAttributesData.attributes[0].name),
-        await expect(productAttributes[0].value).to.equal(editProductAttributesData.attributes[0].values.join(' ')),
-        await expect(productAttributes[1].name).to.equal(editProductAttributesData.attributes[1].name),
-        await expect(productAttributes[1].value).to.equal(editProductAttributesData.attributes[1].values.join(' ')),
+        await expect(productAttributes[0].name).to.equal(editProductAttributesData[0].name),
+        await expect(productAttributes[0].value).to.equal(editProductAttributesData[0].values.join(' ')),
+        await expect(productAttributes[1].name).to.equal(editProductAttributesData[1].name),
+        await expect(productAttributes[1].value).to.equal(editProductAttributesData[1].values.join(' ')),
       ]);
     });
 
@@ -675,7 +679,4 @@ describe('BO - Catalog - Products : CRUD product with combinations', async () =>
       await expect(createProductMessage).to.equal(productsPage.successfulDeleteMessage);
     });
   });
-
-  // Post-condition: Reset initial state
-  resetNewProductPageAsDefault(`${baseContext}_resetNewProduct`);
 });

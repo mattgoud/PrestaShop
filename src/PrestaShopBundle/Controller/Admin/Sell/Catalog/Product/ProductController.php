@@ -58,6 +58,7 @@ use PrestaShop\PrestaShop\Core\Domain\Shop\Exception\ShopAssociationNotFound;
 use PrestaShop\PrestaShop\Core\Domain\Shop\ValueObject\ShopConstraint;
 use PrestaShop\PrestaShop\Core\Domain\Shop\ValueObject\ShopId;
 use PrestaShop\PrestaShop\Core\FeatureFlag\FeatureFlagSettings;
+use PrestaShop\PrestaShop\Core\FeatureFlag\FeatureFlagStateCheckerInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Builder\FormBuilderInterface;
 use PrestaShop\PrestaShop\Core\Form\IdentifiableObject\Handler\FormHandlerInterface;
 use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\GridDefinitionFactoryInterface;
@@ -68,9 +69,9 @@ use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use PrestaShopBundle\Controller\BulkActionsTrait;
 use PrestaShopBundle\Entity\AdminFilter;
 use PrestaShopBundle\Entity\ProductDownload;
-use PrestaShopBundle\Entity\Repository\FeatureFlagRepository;
 use PrestaShopBundle\Form\Admin\Sell\Product\Category\CategoryFilterType;
 use PrestaShopBundle\Form\Admin\Type\ShopSelectorType;
+use PrestaShopBundle\Security\Admin\Employee;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use PrestaShopBundle\Security\Annotation\DemoRestricted;
 use PrestaShopBundle\Service\Grid\ResponseBuilder;
@@ -726,21 +727,18 @@ class ProductController extends FrameworkBundleAdminController
      *     redirectQueryParamsToKeep={"id_category"},
      *     message="You do not have permission to edit this."
      * )
-     * @DemoRestricted(
-     *     redirectRoute="admin_products_index",
-     *     redirectQueryParamsToKeep={"id_category"}
-     * )
      *
      * @param Request $request
      *
      * @return RedirectResponse
      */
+    #[DemoRestricted(redirectRoute: 'admin_products_index', redirectQueryParamsToKeep: ['id_category'])]
     public function updatePositionAction(Request $request): RedirectResponse
     {
         try {
             $this->getCommandBus()->handle(
                 new UpdateProductsPositionsCommand(
-                    $request->request->get('positions'),
+                    $request->request->all('positions'),
                     $request->query->getInt('id_category')
                 )
             );
@@ -985,7 +983,7 @@ class ProductController extends FrameworkBundleAdminController
     }
 
     /**
-     * @AdminSecurity("is_granted(['read'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
      *
      * @param Request $request
      * @param string $languageCode
@@ -1032,7 +1030,7 @@ class ProductController extends FrameworkBundleAdminController
     }
 
     /**
-     * @AdminSecurity("is_granted(['read'], request.get('_legacy_controller'))")
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
      *
      * @param int $productId
      * @param int $shopId
@@ -1432,7 +1430,7 @@ class ProductController extends FrameworkBundleAdminController
                 ),
             ],
             ProductNotFoundException::class => $this->trans(
-                'The object cannot be loaded (or found)',
+                'The object cannot be loaded (or found).',
                 'Admin.Notifications.Error'
             ),
         ];
@@ -1496,7 +1494,7 @@ class ProductController extends FrameworkBundleAdminController
         }
 
         $adminFiltersRepository = $this->get('prestashop.core.admin.admin_filter.repository');
-        $employeeId = $this->getUser()->getId();
+        $employeeId = $this->getUser() instanceof Employee ? $this->getUser()->getId() : 0;
         $shopId = $this->getContext()->shop->id;
 
         return $adminFiltersRepository->findByEmployeeAndFilterId($employeeId, $shopId, ProductGridDefinitionFactory::GRID_ID);
@@ -1507,7 +1505,7 @@ class ProductController extends FrameworkBundleAdminController
      */
     private function shouldRedirectToV1(): bool
     {
-        return $this->get(FeatureFlagRepository::class)->isDisabled(FeatureFlagSettings::FEATURE_FLAG_PRODUCT_PAGE_V2);
+        return $this->get(FeatureFlagStateCheckerInterface::class)->isDisabled(FeatureFlagSettings::FEATURE_FLAG_PRODUCT_PAGE_V2);
     }
 
     /**

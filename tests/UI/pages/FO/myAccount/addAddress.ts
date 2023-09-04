@@ -127,7 +127,7 @@ class AddAddress extends FOBasePage {
     }
 
     // Save address
-    await this.clickAndWaitForNavigation(page, this.saveButton);
+    await this.clickAndWaitForURL(page, this.saveButton);
 
     return this.getTextContent(page, this.alertSuccessBlock);
   }
@@ -148,7 +148,7 @@ class AddAddress extends FOBasePage {
    * @returns {Promise<boolean>}
    */
   async countryExist(page: Page, countryName: string): Promise<boolean> {
-    const options: string = await page.$$eval(
+    const options: (string|null)[] = await page.$$eval(
       `${this.countrySelect} option`,
       (all) => all.map((option) => option.textContent),
     );

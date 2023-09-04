@@ -177,7 +177,7 @@ class OrderController extends FrameworkBundleAdminController
 
         if (!$isSingleShopContext) {
             $toolbarButtons['add']['help'] = $this->trans(
-                'You can use this feature in a single shop context only. Switch context to enable it.',
+                'You can use this feature in a single-store context only. Switch contexts to enable it.',
                 'Admin.Orderscustomers.Feature'
             );
             $toolbarButtons['add']['href'] = '#';
@@ -233,7 +233,7 @@ class OrderController extends FrameworkBundleAdminController
     public function createAction(Request $request)
     {
         /** @var ShopContext $shopContextChecker */
-        $shopContextChecker = $this->container->get('prestashop.adapter.shop.context');
+        $shopContextChecker = $this->get('prestashop.adapter.shop.context');
 
         if (!$shopContextChecker->isSingleShopContext()) {
             $this->addFlash('error', $this->trans(
@@ -479,7 +479,7 @@ class OrderController extends FrameworkBundleAdminController
             'order_id' => $orderId,
         ]);
 
-        $currencyDataProvider = $this->container->get('prestashop.adapter.data_provider.currency');
+        $currencyDataProvider = $this->get('prestashop.adapter.data_provider.currency');
         //@todo: Fix me. Should not rely on legacy object model - Currency
         $orderCurrency = $currencyDataProvider->getCurrencyById($orderForViewing->getCurrencyId());
 
@@ -776,7 +776,7 @@ class OrderController extends FrameworkBundleAdminController
         $formBuilder = $this->get('prestashop.core.form.identifiable_object.builder.cancel_product_form_builder');
         $cancelProductForm = $formBuilder->getFormFor($orderId);
 
-        $currencyDataProvider = $this->container->get('prestashop.adapter.data_provider.currency');
+        $currencyDataProvider = $this->get('prestashop.adapter.data_provider.currency');
         $orderCurrency = $currencyDataProvider->getCurrencyById($orderForViewing->getCurrencyId());
 
         $addedGridRows = '';
@@ -1044,7 +1044,7 @@ class OrderController extends FrameworkBundleAdminController
         $formBuilder = $this->get('prestashop.core.form.identifiable_object.builder.cancel_product_form_builder');
         $cancelProductForm = $formBuilder->getFormFor($orderId);
 
-        $currencyDataProvider = $this->container->get('prestashop.adapter.data_provider.currency');
+        $currencyDataProvider = $this->get('prestashop.adapter.data_provider.currency');
         $orderCurrency = $currencyDataProvider->getCurrencyById($orderForViewing->getCurrencyId());
 
         return $this->render('@PrestaShop/Admin/Sell/Order/Order/Blocks/View/product.html.twig', [
@@ -1272,16 +1272,13 @@ class OrderController extends FrameworkBundleAdminController
      *     redirectQueryParamsToKeep={"orderId"},
      *     message="You do not have permission to edit this."
      * )
-     * @DemoRestricted(
-     *     redirectRoute="admin_orders_view",
-     *     redirectQueryParamsToKeep={"orderId"}
-     * )
      *
      * @param Request $request
      * @param int $orderId
      *
      * @return Response
      */
+    #[DemoRestricted(redirectRoute: 'admin_orders_view', redirectQueryParamsToKeep: ['orderId'])]
     public function sendMessageAction(Request $request, int $orderId): Response
     {
         $orderMessageForm = $this->createForm(OrderMessageType::class);
@@ -1577,7 +1574,7 @@ class OrderController extends FrameworkBundleAdminController
         /** @var OrderForViewing $orderForViewing */
         $orderForViewing = $this->getQueryBus()->handle(new GetOrderForViewing($orderId, QuerySorting::DESC));
 
-        $currencyDataProvider = $this->container->get('prestashop.adapter.data_provider.currency');
+        $currencyDataProvider = $this->get('prestashop.adapter.data_provider.currency');
         $orderCurrency = $currencyDataProvider->getCurrencyById($orderForViewing->getCurrencyId());
 
         $formBuilder = $this->get('prestashop.core.form.identifiable_object.builder.cancel_product_form_builder');

@@ -6,21 +6,21 @@ import testContext from '@utils/testContext';
 // Import commonTests
 import loginCommon from '@commonTests/BO/loginBO';
 import {
-  disableNewProductPageTest,
   resetNewProductPageAsDefault,
+  setFeatureFlag,
 } from '@commonTests/BO/advancedParameters/newFeatures';
 
 // Import pages
+// BO
+import featureFlagPage from '@pages/BO/advancedParameters/featureFlag';
+import boDashboardPage from '@pages/BO/dashboard';
+import boProductsPage from '@pages/BO/catalog/products';
+import boAddProductPage from '@pages/BO/catalog/products/add';
 // FO
 import {homePage} from '@pages/FO/home';
 import searchResultsPage from '@pages/FO/searchResults';
 import productPage from '@pages/FO/product';
-import cartPage from '@pages/FO/cart';
-
-// BO
-import boDashboardPage from '@pages/BO/dashboard';
-import boProductsPage from '@pages/BO/catalog/products';
-import boAddProductPage from '@pages/BO/catalog/products/add';
+import {cartPage} from '@pages/FO/cart';
 
 // Import data
 import Products from '@data/demo/products';
@@ -76,7 +76,7 @@ describe('FO - product page : Add product to cart', async () => {
   let page: Page;
 
   // Pre-condition: Disable new product page
-  disableNewProductPageTest(`${baseContext}_disableNewProduct`);
+  setFeatureFlag(featureFlagPage.featureFlagProductPageV2, false, `${baseContext}_disableNewProduct`);
 
   // before and after functions
   before(async function () {
@@ -111,7 +111,7 @@ describe('FO - product page : Add product to cart', async () => {
     it('should check product details', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'checkProductInformation', baseContext);
 
-      let result = await productPage.getProductInformation(page);
+      const result = await productPage.getProductInformation(page);
       await Promise.all([
         await expect(result.name).to.equal(Products.demo_1.name),
         await expect(result.price).to.equal(Products.demo_1.finalPrice),
@@ -119,11 +119,11 @@ describe('FO - product page : Add product to cart', async () => {
         await expect(result.description).to.equal(Products.demo_1.description),
       ]);
 
-      result = await productPage.getRegularPrice(page);
-      await expect(result).to.equal(Products.demo_1.retailPrice);
+      const resultRegularPrice = await productPage.getRegularPrice(page);
+      await expect(resultRegularPrice).to.equal(Products.demo_1.retailPrice);
 
-      result = await productPage.getDiscountPercentage(page);
-      await expect(result).to.contains(`${Products.demo_1.specificPrice.discount}%`);
+      const resultDiscountPercentage = await productPage.getDiscountPercentage(page);
+      await expect(resultDiscountPercentage).to.contains(`${Products.demo_1.specificPrice.discount}%`);
 
       const productAttributes = await productPage.getProductAttributes(page);
       await Promise.all([
@@ -133,10 +133,10 @@ describe('FO - product page : Add product to cart', async () => {
         await expect(productAttributes[1].value).to.equal(Products.demo_1.attributes[1].values.join(' ')),
       ]);
 
-      result = await productPage.getProductImageUrls(page);
+      const resultImageUrls = await productPage.getProductImageUrls(page);
       await Promise.all([
-        await expect(result.coverImage).to.contains(Products.demo_1.coverImage),
-        await expect(result.thumbImage).to.contains(Products.demo_1.coverImage),
+        await expect(resultImageUrls.coverImage).to.contains(Products.demo_1.coverImage),
+        await expect(resultImageUrls.thumbImage).to.contains(Products.demo_1.coverImage),
       ]);
     });
 
@@ -145,7 +145,7 @@ describe('FO - product page : Add product to cart', async () => {
 
       await productPage.selectAttributes(page, 1, firstCombination);
 
-      let result = await productPage.getProductInformation(page);
+      const result = await productPage.getProductInformation(page);
       await Promise.all([
         await expect(result.name).to.equal(Products.demo_1.name),
         await expect(result.price).to.equal(Products.demo_1.finalPrice),
@@ -153,16 +153,16 @@ describe('FO - product page : Add product to cart', async () => {
         await expect(result.description).to.equal(Products.demo_1.description),
       ]);
 
-      result = await productPage.getDiscountPercentage(page);
-      await expect(result).to.contains(Products.demo_1.specificPrice.discount);
+      const resultDiscountPercentage = await productPage.getDiscountPercentage(page);
+      await expect(resultDiscountPercentage).to.contains(Products.demo_1.specificPrice.discount);
 
-      result = await productPage.getRegularPrice(page);
-      await expect(result).to.equal(Products.demo_1.retailPrice);
+      const resultRegularPrice = await productPage.getRegularPrice(page);
+      await expect(resultRegularPrice).to.equal(Products.demo_1.retailPrice);
 
-      result = await productPage.getProductImageUrls(page);
+      const resultImageUrls = await productPage.getProductImageUrls(page);
       await Promise.all([
-        await expect(result.coverImage).to.contains(Products.demo_1.coverImage),
-        await expect(result.thumbImage).to.contains(Products.demo_1.coverImage),
+        await expect(resultImageUrls.coverImage).to.contains(Products.demo_1.coverImage),
+        await expect(resultImageUrls.thumbImage).to.contains(Products.demo_1.coverImage),
       ]);
 
       const selectedProductAttributes = await productPage.getSelectedProductAttributes(page);

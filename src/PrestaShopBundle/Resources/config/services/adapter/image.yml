@@ -41,7 +41,7 @@ services:
 
   PrestaShop\PrestaShop\Adapter\Image\ImageGenerator:
     arguments:
-      - '@prestashop.core.admin.feature_flag.repository'
+      - '@PrestaShop\PrestaShop\Core\FeatureFlag\FeatureFlagManager'
       - '@PrestaShop\PrestaShop\Core\Image\ImageFormatConfiguration'
 
   PrestaShop\PrestaShop\Adapter\Image\ImageValidator:
@@ -52,10 +52,6 @@ services:
     arguments:
       - '@=service("prestashop.core.configuration.upload_size_configuration").getMaxUploadSizeInBytes()'
       - '@prestashop.adapter.upload_quota.configuration'
-
-  prestashop.adapter.image.image_validator:
-    alias: PrestaShop\PrestaShop\Adapter\Image\ImageValidator
-    deprecated: ~
 
   prestashop.adapter.image.category_image_path_factory:
     class: 'PrestaShop\PrestaShop\Adapter\Image\ImagePathFactory'

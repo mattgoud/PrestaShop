@@ -12,12 +12,12 @@ import dashboardPage from '@pages/BO/dashboard';
 import ordersPage from '@pages/BO/orders';
 import {viewOrderBasePage} from '@pages/BO/orders/view/viewOrderBasePage';
 // Import FO pages
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import checkoutPage from '@pages/FO/checkout';
 import orderConfirmationPage from '@pages/FO/checkout/orderConfirmation';
 import {homePage} from '@pages/FO/home';
 import {loginPage as foLoginPage} from '@pages/FO/login';
-import myAccountPage from '@pages/FO/myAccount';
+import {myAccountPage} from '@pages/FO/myAccount';
 import foMerchandiseReturnsPage from '@pages/FO/myAccount/merchandiseReturns';
 import orderDetailsPage from '@pages/FO/myAccount/orderDetails';
 import orderHistoryPage from '@pages/FO/myAccount/orderHistory';

@@ -818,7 +818,7 @@ class HookCore extends ObjectModel
                 $hookRegistry->collect();
             }
 
-            return ($array_return) ? [] : false;
+            return ($array_return) ? [] : null;
         }
 
         // Store list of executed hooks on this page
@@ -1000,7 +1000,7 @@ class HookCore extends ObjectModel
     public static function coreRenderWidget($module, $hook_name, $params)
     {
         $context = Context::getContext();
-        if (!Module::isEnabled($module->name) || $context->isMobile() && !Module::isEnabledForMobileDevices($module->name)) {
+        if (!Module::isEnabled($module->name)) {
             return null;
         }
 
@@ -1100,8 +1100,7 @@ class HookCore extends ObjectModel
                 Shop::addSqlAssociation(
                     'module',
                     'm',
-                    true,
-                    'module_shop.enable_device & ' . (int) Context::getContext()->getDevice()
+                    true
                 )
             );
         } else {
@@ -1221,7 +1220,7 @@ class HookCore extends ObjectModel
     {
         $cacheId = 'hook_idsbyname';
         if ($withAliases) {
-            $cacheId .= 'hook_idsbyname_withalias';
+            $cacheId = 'hook_idsbyname_withalias';
         }
 
         if (!$refreshCache && Cache::isStored($cacheId)) {

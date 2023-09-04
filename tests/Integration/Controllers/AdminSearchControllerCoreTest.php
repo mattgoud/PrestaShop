@@ -31,9 +31,9 @@ namespace Tests\Integration\Controllers;
 use AdminSearchControllerCore;
 use Context;
 use Employee;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class AdminSearchControllerCoreTest extends TestCase
+class AdminSearchControllerCoreTest extends KernelTestCase
 {
     /**
      * @dataProvider dataProviderSearch
@@ -85,7 +85,7 @@ class AdminSearchControllerCoreTest extends TestCase
                     'features' => [
                         'Orders' => [
                             [
-                                'link' => 'http://localhost/admin-dev/index.php?controller=AdminOrders',
+                                'link' => 'http://localhost/admin-dev/index.php?controller=AdminOrders&bo_query=orders',
                             ],
                         ],
                     ],

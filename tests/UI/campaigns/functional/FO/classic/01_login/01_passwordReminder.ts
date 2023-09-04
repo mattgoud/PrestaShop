@@ -11,12 +11,12 @@ import {createAccountTest} from '@commonTests/FO/account';
 // Import FO pages
 import {homePage} from '@pages/FO/home';
 import {loginPage} from '@pages/FO/login';
-import myAccountPage from '@pages/FO/myAccount';
-import passwordReminderPage from '@pages/FO/passwordReminder';
+import {myAccountPage} from '@pages/FO/myAccount';
+import {passwordReminderPage} from '@pages/FO/passwordReminder';
 
 // Import data
 import CustomerData from '@data/faker/customer';
-import MailDevEmail from '@data/types/maildev';
+import type MailDevEmail from '@data/types/maildevEmail';
 
 import {expect} from 'chai';
 import type MailDev from 'maildev';
@@ -153,7 +153,7 @@ describe('FO - Login : Password reminder', async () => {
     it('should try to login with old password and check the error message', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'signInFOWithOldPassword', baseContext);
 
-      await loginPage.customerLogin(page, customerData);
+      await loginPage.customerLogin(page, customerData, false);
 
       const loginError = await loginPage.getLoginError(page);
       await expect(loginError).to.contains(loginPage.loginErrorText);

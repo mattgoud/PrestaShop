@@ -6,27 +6,27 @@ import testContext from '@utils/testContext';
 // Import commonTests
 import loginCommon from '@commonTests/BO/loginBO';
 import {
-  disableNewProductPageTest,
   resetNewProductPageAsDefault,
+  setFeatureFlag,
 } from '@commonTests/BO/advancedParameters/newFeatures';
 
 // Import pages
-// FO
-import {homePage} from '@pages/FO/home';
-import cartPage from '@pages/FO/cart';
-import productPage from '@pages/FO/product';
-import searchResultsPage from '@pages/FO/searchResults';
-
 // BO
+import featureFlagPage from '@pages/BO/advancedParameters/featureFlag';
 import boDashboardPage from '@pages/BO/dashboard';
 import boProductsPage from '@pages/BO/catalog/products';
 import boAddProductPage from '@pages/BO/catalog/products/add';
+// FO
+import {homePage} from '@pages/FO/home';
+import {cartPage} from '@pages/FO/cart';
+import productPage from '@pages/FO/product';
+import searchResultsPage from '@pages/FO/searchResults';
 
 // Import data
 import Products from '@data/demo/products';
 import ProductData from '@data/faker/product';
 import CartProductDetails from '@data/types/cart';
-import type {ProductAttribute} from '@data/types/product';
+import type {ProductAttribute, ProductImageUrls} from '@data/types/product';
 
 import {expect} from 'chai';
 import type {BrowserContext, Page} from 'playwright';
@@ -106,7 +106,7 @@ describe('FO - product page : Product quick view', async () => {
   ];
 
   // Pre-condition: Disable new product page
-  disableNewProductPageTest(`${baseContext}_disableNewProduct`);
+  setFeatureFlag(featureFlagPage.featureFlagProductPageV2, false, `${baseContext}_disableNewProduct`);
 
   // before and after functions
   before(async function () {
@@ -353,8 +353,8 @@ describe('FO - product page : Product quick view', async () => {
 
   // 7 - Select color on hover from product list
   describe('Select color on hover on product list', async () => {
-    let imageFirstColor: {thumbImage: string, coverImage: string};
-    let imageSecondColor: {thumbImage: string, coverImage: string};
+    let imageFirstColor: ProductImageUrls;
+    let imageSecondColor: ProductImageUrls;
 
     it('should go to home page', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'goToHomeToSelectColor', baseContext);

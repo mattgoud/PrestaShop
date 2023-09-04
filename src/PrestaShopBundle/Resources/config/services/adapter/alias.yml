@@ -11,11 +11,25 @@ services:
       $dbPrefix: '%database_prefix%'
 
   PrestaShop\PrestaShop\Adapter\Alias\CommandHandler\AddAliasHandler:
-    tags:
-      - name: tactician.handler
-        command: PrestaShop\PrestaShop\Core\Domain\Alias\Command\AddAliasCommand
+    autoconfigure: true
 
   PrestaShop\PrestaShop\Adapter\Alias\QueryHandler\GetAliasForEditingHandler:
-    tags:
-      - name: tactician.handler
-        command: PrestaShop\PrestaShop\Core\Domain\Alias\Query\GetAliasForEditing
+    autoconfigure: true
+
+  PrestaShop\PrestaShop\Adapter\Alias\CommandHandler\DeleteAliasHandler:
+    autoconfigure: true
+
+  PrestaShop\PrestaShop\Adapter\Alias\CommandHandler\BulkDeleteAliasHandler:
+    autoconfigure: true
+
+  PrestaShop\PrestaShop\Adapter\Alias\CommandHandler\UpdateAliasStatusHandler:
+    autoconfigure: true
+
+  PrestaShop\PrestaShop\Adapter\Alias\CommandHandler\BulkUpdateAliasStatusHandler:
+    autoconfigure: true
+
+  PrestaShop\PrestaShop\Adapter\Alias\CommandHandler\UpdateAliasHandler:
+    autoconfigure: true
+
+  PrestaShop\PrestaShop\Adapter\Alias\QueryHandler\SearchForSearchTermHandler:
+    autoconfigure: true

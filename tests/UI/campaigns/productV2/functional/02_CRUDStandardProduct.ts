@@ -1,11 +1,11 @@
-import type {BrowserContext, Page} from 'playwright';
-import {expect} from 'chai';
-
 // Import utils
 import helper from '@utils/helpers';
 import files from '@utils/files';
 import testContext from '@utils/testContext';
 import basicHelper from '@utils/basicHelper';
+
+// Import common tests
+import loginCommon from '@commonTests/BO/loginBO';
 
 // Import pages
 import dashboardPage from '@pages/BO/dashboard';
@@ -13,15 +13,11 @@ import createProductsPage from '@pages/BO/catalog/productsV2/add';
 import productsPage from '@pages/BO/catalog/productsV2';
 import foProductPage from '@pages/FO/product';
 
-// Import common tests
-import loginCommon from '@commonTests/BO/loginBO';
-import {
-  enableNewProductPageTest,
-  resetNewProductPageAsDefault,
-} from '@commonTests/BO/advancedParameters/newFeatures';
-
 // Import data
 import ProductData from '@data/faker/product';
+
+import type {BrowserContext, Page} from 'playwright';
+import {expect} from 'chai';
 
 const baseContext: string = 'productV2_functional_CRUDStandardProduct';
 
@@ -49,21 +45,26 @@ describe('BO - Catalog - Products : CRUD standard product', async () => {
     status: true,
   });
 
-  // Pre-condition: Enable new product page
-  enableNewProductPageTest(`${baseContext}_enableNewProduct`);
-
   // before and after functions
   before(async function () {
     browserContext = await helper.createBrowserContext(this.browser);
     page = await helper.newTab(browserContext);
-    await files.generateImage(newProductData.coverImage);
-    await files.generateImage(newProductData.thumbImage);
+    if (newProductData.coverImage) {
+      await files.generateImage(newProductData.coverImage);
+    }
+    if (newProductData.thumbImage) {
+      await files.generateImage(newProductData.thumbImage);
+    }
   });
 
   after(async () => {
     await helper.closeBrowserContext(browserContext);
-    await files.deleteFile(newProductData.coverImage);
-    await files.deleteFile(newProductData.thumbImage);
+    if (newProductData.coverImage) {
+      await files.deleteFile(newProductData.coverImage);
+    }
+    if (newProductData.thumbImage) {
+      await files.deleteFile(newProductData.thumbImage);
+    }
   });
 
   // 1 - Create product
@@ -262,7 +263,4 @@ describe('BO - Catalog - Products : CRUD standard product', async () => {
       await expect(createProductMessage).to.equal(productsPage.successfulDeleteMessage);
     });
   });
-
-  // Post-condition: Reset initial state
-  resetNewProductPageAsDefault(`${baseContext}_resetNewProduct`);
 });

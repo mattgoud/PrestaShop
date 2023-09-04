@@ -13,7 +13,7 @@ import cartRulesPage from '@pages/BO/catalog/discounts';
 import addCartRulePage from '@pages/BO/catalog/discounts/add';
 import dashboardPage from '@pages/BO/dashboard';
 // Import FO pages
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import {homePage} from '@pages/FO/home';
 import {loginPage} from '@pages/FO/login';
 import productPage from '@pages/FO/product';
@@ -179,7 +179,7 @@ describe('BO - Catalog - Cart rules : Apply discount to specific product', async
     it('should check the discount value', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'checkDiscountValue1', baseContext);
 
-      const discount = await basicHelper.percentage(Products.demo_8.finalPrice, newCartRuleData.discountPercent);
+      const discount = await basicHelper.percentage(Products.demo_8.finalPrice, newCartRuleData.discountPercent!);
 
       const discountValue = await cartPage.getDiscountValue(page);
       await expect(discountValue).to.eq(-discount.toFixed(2));
@@ -197,7 +197,7 @@ describe('BO - Catalog - Cart rules : Apply discount to specific product', async
     it('should check the discount value', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'checkDiscountValue2', baseContext);
 
-      const discount = await basicHelper.percentage(Products.demo_8.finalPrice, newCartRuleData.discountPercent);
+      const discount = await basicHelper.percentage(Products.demo_8.finalPrice, newCartRuleData.discountPercent!);
 
       const discountValue = await cartPage.getDiscountValue(page);
       await expect(discountValue).to.eq(-discount.toFixed(2));

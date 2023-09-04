@@ -217,11 +217,7 @@ class AttributeGroupController extends FrameworkBundleAdminController
      */
     private function getAttributeGroupIdsFromRequest(Request $request)
     {
-        $attributeGroupIds = $request->request->get('attribute_group_bulk');
-
-        if (!is_array($attributeGroupIds)) {
-            return [];
-        }
+        $attributeGroupIds = $request->request->all('attribute_group_bulk');
 
         foreach ($attributeGroupIds as $i => $attributeGroupId) {
             $attributeGroupIds[$i] = (int) $attributeGroupId;
@@ -239,7 +235,7 @@ class AttributeGroupController extends FrameworkBundleAdminController
     {
         return [
             AttributeGroupNotFoundException::class => $this->trans(
-                'The object cannot be loaded (or found)',
+                'The object cannot be loaded (or found).',
                 'Admin.Notifications.Error'
             ),
             DeleteAttributeGroupException::class => [

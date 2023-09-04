@@ -10,7 +10,7 @@ import loginCommon from '@commonTests/BO/loginBO';
 import dashboardPage from '@pages/BO/dashboard';
 import advancedCustomizationPage from '@pages/BO/design/themeAndLogo/advancedCustomization';
 import themeAndLogoPage from '@pages/BO/design/themeAndLogo/themeAndLogo';
-import moduleManagerPage from '@pages/BO/modules/moduleManager';
+import {moduleManager as moduleManagerPage} from '@pages/BO/modules/moduleManager';
 // Import FO pages
 import {homePage} from '@pages/FO/home';
 
@@ -36,7 +36,7 @@ describe('BO - Design - Theme & Logo - Advanced Customization', async () => {
   let browserContext: BrowserContext;
   let page: Page;
   // Variable used to create temporary theme file
-  let filePath: string;
+  let filePath: string|null;
 
   // Variable used to create child_classic.zip file
   const renamedFilePath: string = 'child_classic.zip';
@@ -79,7 +79,7 @@ describe('BO - Design - Theme & Logo - Advanced Customization', async () => {
     it(`should check the status of the module ${Modules.themeCustomization.name}`, async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'checkStatusModule', baseContext);
 
-      const isModuleEnabled = await moduleManagerPage.isModuleEnabled(page, Modules.themeCustomization.name);
+      const isModuleEnabled = await moduleManagerPage.isModuleStatus(page, Modules.themeCustomization.name, 'enable');
       await expect(isModuleEnabled, `The module ${Modules.themeCustomization.name} is disabled`).to.be.true;
     });
   });

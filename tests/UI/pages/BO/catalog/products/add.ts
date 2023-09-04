@@ -273,7 +273,7 @@ class AddProduct extends BOBasePage {
    * @returns {Promise<void>}
    */
   async addProductImages(page: Page, imagesPaths: (string | null)[] = []): Promise<void> {
-    const filteredImagePaths: string[] = imagesPaths.filter((el: string | null) => el !== null);
+    const filteredImagePaths: string[] = imagesPaths.filter((el: string | null): el is string => el !== null);
 
     if (filteredImagePaths !== null && filteredImagePaths.length !== 0) {
       const numberOfImages = await this.getNumberOfImages(page);
@@ -455,7 +455,7 @@ class AddProduct extends BOBasePage {
     const textBody = await this.getTextContent(newPage, 'body');
 
     if (textBody.includes('[Debug] This page has moved')) {
-      await this.clickAndWaitForNavigation(newPage, 'a');
+      await this.clickAndWaitForURL(newPage, 'a');
     }
     return newPage;
   }
@@ -470,7 +470,7 @@ class AddProduct extends BOBasePage {
       this.waitForVisibleSelector(page, this.modalDialog),
       page.click(this.productDeleteLink),
     ]);
-    await this.clickAndWaitForNavigation(page, this.modalDialogYesButton);
+    await this.clickAndWaitForURL(page, this.modalDialogYesButton);
     return this.getAlertSuccessBlockParagraphContent(page);
   }
 
@@ -551,7 +551,7 @@ class AddProduct extends BOBasePage {
   /**
    * Get friendly URL
    * @param page {Page} Browser tab
-   * @returns {Promise<string|null>}
+   * @returns {Promise<string>}
    */
   async getFriendlyURL(page: Page): Promise<string | null> {
     await this.reloadPage(page);
@@ -680,7 +680,7 @@ class AddProduct extends BOBasePage {
    * @returns {Promise<void>}
    */
   async goToCatalogPage(page: Page): Promise<void> {
-    await this.clickAndWaitForNavigation(page, this.goToCatalogButton);
+    await this.clickAndWaitForURL(page, this.goToCatalogButton);
   }
 
   /**
@@ -689,7 +689,7 @@ class AddProduct extends BOBasePage {
    * @returns {Promise<void>}
    */
   async goToAddProductPage(page: Page): Promise<void> {
-    await this.clickAndWaitForNavigation(page, this.addNewProductButton);
+    await this.clickAndWaitForURL(page, this.addNewProductButton);
   }
 
   /**
@@ -721,7 +721,7 @@ class AddProduct extends BOBasePage {
   /**
    * Get product name from input
    * @param page {Page} Browser tab
-   * @return {Promise<string|null>}
+   * @return {Promise<string>}
    */
   getProductName(page: Page): Promise<string | null> {
     return this.getAttributeContent(page, this.productNameInput, 'value');

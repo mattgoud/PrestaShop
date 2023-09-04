@@ -80,7 +80,10 @@ class AddCategory extends BOBasePage {
   async selectAllGroups(page: Page): Promise<void> {
     if (!(await page.isChecked(this.selectAllGroupAccessCheckbox))) {
       const parentElement = await this.getParentElement(page, this.selectAllGroupAccessCheckbox);
-      await parentElement.click();
+
+      if (parentElement instanceof HTMLElement) {
+        await parentElement.click();
+      }
     }
   }
 
@@ -108,7 +111,7 @@ class AddCategory extends BOBasePage {
     await this.selectAllGroups(page);
 
     // Save Category
-    await this.clickAndWaitForNavigation(page, this.saveCategoryButton);
+    await this.clickAndWaitForURL(page, this.saveCategoryButton);
     return this.getAlertSuccessBlockParagraphContent(page);
   }
 
@@ -127,7 +130,7 @@ class AddCategory extends BOBasePage {
     await this.setValue(page, this.rootCategoryMetaDescriptionTextarea, categoryData.metaDescription);
     await this.selectAllGroups(page);
     // Save Category
-    await this.clickAndWaitForNavigation(page, this.saveCategoryButton);
+    await this.clickAndWaitForURL(page, this.saveCategoryButton);
     return this.getPageTitle(page);
   }
 }

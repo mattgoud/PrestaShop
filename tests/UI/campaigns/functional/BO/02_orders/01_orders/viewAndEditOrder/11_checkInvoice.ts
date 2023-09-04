@@ -12,11 +12,12 @@ import {enableEcoTaxTest, disableEcoTaxTest} from '@commonTests/BO/international
 import loginCommon from '@commonTests/BO/loginBO';
 import {createOrderByCustomerTest, createOrderSpecificProductTest} from '@commonTests/FO/order';
 import {
-  disableNewProductPageTest,
   resetNewProductPageAsDefault,
+  setFeatureFlag,
 } from '@commonTests/BO/advancedParameters/newFeatures';
 
 // Import BO pages
+import featureFlagPage from '@pages/BO/advancedParameters/featureFlag';
 import productsPage from '@pages/BO/catalog/products';
 import addProductPage from '@pages/BO/catalog/products/add';
 import dashboardPage from '@pages/BO/dashboard';
@@ -38,6 +39,9 @@ import OrderData from '@data/faker/order';
 
 import {expect} from 'chai';
 import type {BrowserContext, Page} from 'playwright';
+import OrderShippingData from '@data/faker/orderShipping';
+import type {OrderPayment} from '@data/types/order';
+import type {ProductDiscount} from '@data/types/product';
 
 const baseContext = 'functional_BO_orders_orders_viewAndEditOrder_checkInvoice';
 
@@ -140,17 +144,17 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
     minimumQuantity: 1,
   });
   // Discount data
-  const discountData = {
+  const discountData: ProductDiscount = {
     name: 'Discount',
     type: 'Percent',
-    value: 65,
+    value: '65',
   };
   // Payment data
-  const paymentData = {
+  const paymentData: OrderPayment = {
     date: today,
     paymentMethod: 'Payments by check',
-    transactionID: '12190',
-    amount: (productWithEcoTax.price).toFixed(2),
+    transactionID: 12190,
+    amount: parseFloat((productWithEcoTax.price).toFixed(2)),
     currency: '€',
   };
 
@@ -161,7 +165,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
   enableEcoTaxTest(`${baseContext}_preTest_2`);
 
   // Pre-condition: Disable new product page
-  disableNewProductPageTest(`${baseContext}_disableNewProduct`);
+  setFeatureFlag(featureFlagPage.featureFlagProductPageV2, false, `${baseContext}_disableNewProduct`);
 
   // before and after functions
   before(async function () {
@@ -375,7 +379,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
           // Check delivery address
           const deliveryAddressExist = await files.isTextInPDF(
             filePath,
-            'Delivery Address,,'
+            'Delivery address,,'
             + `${Addresses.second.firstName} ${Addresses.second.lastName},`
             + `${Addresses.second.company},`
             + `${Addresses.second.address},`
@@ -392,7 +396,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
 
           const billingAddressExist = await files.isTextInPDF(
             filePath,
-            'Billing Address,,'
+            'Billing address,,'
             + `${Addresses.third.firstName} ${Addresses.third.lastName},`
             + `${Addresses.third.company},`
             + `${Addresses.third.address} ${Addresses.third.secondAddress},`
@@ -609,7 +613,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
           // Check delivery address
           const deliveryAddressExist = await files.isTextInPDF(
             filePath,
-            'Delivery Address,,'
+            'Delivery address,,'
             + `${Addresses.second.firstName} ${Addresses.second.lastName},`
             + `${Addresses.second.company},`
             + `${Addresses.second.address},`
@@ -626,7 +630,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
 
           const billingAddressExist = await files.isTextInPDF(
             filePath,
-            'Billing Address,,'
+            'Billing address,,'
             + `${Addresses.second.firstName} ${Addresses.second.lastName},`
             + `${Addresses.second.company},`
             + `${Addresses.second.address},`
@@ -805,7 +809,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
           // Check delivery address
           const deliveryAddressExist = await files.isTextInPDF(
             filePath,
-            'Delivery Address,,'
+            'Delivery address,,'
             + `${Addresses.second.firstName} ${Addresses.second.lastName},`
             + `${Addresses.second.company},`
             + `${Addresses.second.address},`
@@ -822,7 +826,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
 
           const billingAddressExist = await files.isTextInPDF(
             filePath,
-            'Billing Address,,'
+            'Billing address,,'
             + `${Addresses.second.firstName} ${Addresses.second.lastName},`
             + `${Addresses.second.company},`
             + `${Addresses.second.address},`
@@ -1046,7 +1050,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
           // Check delivery address
           const deliveryAddressExist = await files.isTextInPDF(
             filePath,
-            'Delivery Address,,'
+            'Delivery address,,'
             + `${Addresses.second.firstName} ${Addresses.second.lastName},`
             + `${Addresses.second.company},`
             + `${Addresses.second.address},`
@@ -1063,7 +1067,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
 
           const billingAddressExist = await files.isTextInPDF(
             filePath,
-            'Billing Address,,'
+            'Billing address,,'
             + `${Addresses.second.firstName} ${Addresses.second.lastName},`
             + `${Addresses.second.company},`
             + `${Addresses.second.address},`
@@ -1115,7 +1119,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
               filePath,
               `${productWithEcoTax.name}, ,`
               + `€${productWithEcoTax.price.toFixed(2)},,`
-              + `ecotax: €${productWithEcoTax.ecoTax.toFixed(2)},,`
+              + `Ecotax: €${productWithEcoTax.ecoTax.toFixed(2)},,`
               + '1, ,'
               + `€${productWithEcoTax.price.toFixed(2)}`,
             );
@@ -1212,7 +1216,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
 
           const deliveryAddressExist = await files.isTextInPDF(
             filePath,
-            'Delivery Address,,'
+            'Delivery address,,'
             + `${Addresses.third.firstName} ${Addresses.third.lastName},`
             + `${Addresses.third.company},`
             + `${Addresses.third.address} ${Addresses.third.secondAddress},`
@@ -1248,7 +1252,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
 
           const deliveryAddressExist = await files.isTextInPDF(
             filePath,
-            'Billing Address,,'
+            'Billing address,,'
             + `${Addresses.third.firstName} ${Addresses.third.lastName},`
             + `${Addresses.third.company},`
             + `${Addresses.third.address} ${Addresses.third.secondAddress},`
@@ -1342,11 +1346,11 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
         it('should update the carrier', async function () {
           await testContext.addContextItem(this, 'testIdentifier', 'updateCarrier', baseContext);
 
-          const shippingDetailsData = {
+          const shippingDetailsData: OrderShippingData = new OrderShippingData({
             trackingNumber: '',
             carrier: Carriers.myCarrier.name,
             carrierID: 1,
-          };
+          });
 
           const textResult = await orderPageTabListBlock.setShippingDetails(page, shippingDetailsData);
           await expect(textResult).to.equal(orderPageTabListBlock.successfulUpdateMessage);
@@ -1413,7 +1417,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
           await testContext.addContextItem(this, 'testIdentifier', 'checkDiscountsTable', baseContext);
 
           const totalPrice = productWithEcoTax.price + customizedProduct.price;
-          const discount = await basicHelper.percentage(totalPrice, discountData.value);
+          const discount = await basicHelper.percentage(totalPrice, parseInt(discountData.value, 10));
 
           const isDiscountVisible = await files.isTextInPDF(
             filePath,
@@ -1427,7 +1431,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
           await testContext.addContextItem(this, 'testIdentifier', 'checkTotalDiscount', baseContext);
 
           const totalPrice = productWithEcoTax.price + customizedProduct.price;
-          const discount = await basicHelper.percentage(totalPrice, discountData.value);
+          const discount = await basicHelper.percentage(totalPrice, parseInt(discountData.value, 10));
 
           const isDiscountVisible = await files.isTextInPDF(
             filePath,
@@ -1462,7 +1466,7 @@ describe('BO - Orders - View and edit order: Check invoice', async () => {
           await testContext.addContextItem(this, 'testIdentifier', 'checkIsDiscountNotVisible', baseContext);
 
           const totalPrice = productWithEcoTax.price + customizedProduct.price;
-          const discount = await basicHelper.percentage(totalPrice, discountData.value);
+          const discount = await basicHelper.percentage(totalPrice, parseInt(discountData.value, 10));
 
           const isDiscountVisible = await files.isTextInPDF(
             filePath,

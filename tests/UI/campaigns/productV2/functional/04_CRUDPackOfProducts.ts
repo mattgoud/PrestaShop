@@ -1,12 +1,12 @@
-import type {BrowserContext, Page} from 'playwright';
-import {expect} from 'chai';
-
 // Import utils
 import helper from '@utils/helpers';
 import testContext from '@utils/testContext';
 import date from '@utils/date';
 import files from '@utils/files';
 import basicHelper from '@utils/basicHelper';
+
+// Import common tests
+import loginCommon from '@commonTests/BO/loginBO';
 
 // Import pages
 import dashboardPage from '@pages/BO/dashboard';
@@ -16,17 +16,14 @@ import packTab from '@pages/BO/catalog/productsV2/add/packTab';
 import pricingTab from '@pages/BO/catalog/productsV2/add/pricingTab';
 import foProductPage from '@pages/FO/product';
 
-// Import common tests
-import loginCommon from '@commonTests/BO/loginBO';
-import {
-  enableNewProductPageTest,
-  resetNewProductPageAsDefault,
-} from '@commonTests/BO/advancedParameters/newFeatures';
-
 // Import data
 import ProductData from '@data/faker/product';
 import Employees from '@data/demo/employees';
 import Products from '@data/demo/products';
+import {ProductPackOptions} from '@data/types/product';
+
+import type {BrowserContext, Page} from 'playwright';
+import {expect} from 'chai';
 
 const baseContext: string = 'productV2_functional_CRUDPackOfProducts';
 
@@ -53,18 +50,18 @@ describe('BO - Catalog - Products : CRUD pack of products', async () => {
     status: false,
   });
 
-  const editPackData: object = {
+  const editPackData: ProductPackOptions = {
     quantity: 100,
     minimalQuantity: 2,
     packQuantitiesOption: 'Decrement pack only',
   };
 
   // Data to edit the product price
-  const pricingData: object = {
-    price: 15,
+  const pricingData: ProductData = new ProductData({
+    priceTaxExcluded: 15,
     taxRule: 'FR Taux standard (20%)',
-    priceTaxIncl: 18,
-  };
+    price: 18,
+  });
 
   const editProductData: ProductData = new ProductData({
     type: 'pack',
@@ -81,21 +78,26 @@ describe('BO - Catalog - Products : CRUD pack of products', async () => {
     status: true,
   });
 
-  // Pre-condition: Enable new product page
-  enableNewProductPageTest(`${baseContext}_enableNewProduct`);
-
   // before and after functions
   before(async function () {
     browserContext = await helper.createBrowserContext(this.browser);
     page = await helper.newTab(browserContext);
-    await files.generateImage(newProductData.coverImage);
-    await files.generateImage(newProductData.thumbImage);
+    if (newProductData.coverImage) {
+      await files.generateImage(newProductData.coverImage);
+    }
+    if (newProductData.thumbImage) {
+      await files.generateImage(newProductData.thumbImage);
+    }
   });
 
   after(async () => {
     await helper.closeBrowserContext(browserContext);
-    await files.deleteFile(newProductData.coverImage);
-    await files.deleteFile(newProductData.thumbImage);
+    if (newProductData.coverImage) {
+      await files.deleteFile(newProductData.coverImage);
+    }
+    if (newProductData.thumbImage) {
+      await files.deleteFile(newProductData.thumbImage);
+    }
   });
 
   // 1 - Create product
@@ -245,7 +247,7 @@ describe('BO - Catalog - Products : CRUD pack of products', async () => {
           it('should choose the searched product', async function () {
             await testContext.addContextItem(this, 'testIdentifier', `chooseProduct${index}`, baseContext);
 
-            const isListOfProductVisible = await packTab.selectProductFromList(page);
+            const isListOfProductVisible = await packTab.selectProductFromList(page, 1);
             await expect(isListOfProductVisible).to.be.true;
           });
         }
@@ -265,7 +267,7 @@ describe('BO - Catalog - Products : CRUD pack of products', async () => {
             await expect(result.image).to.contains(test.args.product.defaultImage),
             await expect(result.name).to.equal(test.args.productToChooseName),
             await expect(result.reference).to.equal(`Ref: ${test.args.product.reference}`),
-            await expect(parseInt(result.quantity, 10)).to.equal(1),
+            await expect(result.quantity).to.equal(1),
           ]);
         });
       });
@@ -498,7 +500,4 @@ describe('BO - Catalog - Products : CRUD pack of products', async () => {
       await expect(createProductMessage).to.equal(productsPage.successfulDeleteMessage);
     });
   });
-
-  // Post-condition: Reset initial state
-  resetNewProductPageAsDefault(`${baseContext}_resetNewProduct`);
 });

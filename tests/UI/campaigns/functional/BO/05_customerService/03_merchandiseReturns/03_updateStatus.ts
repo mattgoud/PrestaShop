@@ -15,12 +15,12 @@ import ordersPage from '@pages/BO/orders';
 import {viewOrderBasePage} from '@pages/BO/orders/view/viewOrderBasePage';
 import editMerchandiseReturnsPage from '@pages/BO/customerService/merchandiseReturns/edit';
 // Import FO pages
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import checkoutPage from '@pages/FO/checkout';
 import orderConfirmationPage from '@pages/FO/checkout/orderConfirmation';
 import {homePage} from '@pages/FO/home';
 import {loginPage as foLoginPage} from '@pages/FO/login';
-import myAccountPage from '@pages/FO/myAccount';
+import {myAccountPage} from '@pages/FO/myAccount';
 import foMerchandiseReturnsPage from '@pages/FO/myAccount/merchandiseReturns';
 import orderDetailsPage from '@pages/FO/myAccount/orderDetails';
 import orderHistoryPage from '@pages/FO/myAccount/orderHistory';
@@ -53,9 +53,9 @@ Post-condition:
 describe('BO - Customer Service - Merchandise Returns : Update status', async () => {
   let browserContext: BrowserContext;
   let page: Page;
-  let filePath: string;
-  const todayDate: string = date.getDateFormat('mm/dd/yyyy');
+  let filePath: string|null;
   let returnID: number;
+  const todayDate: string = date.getDateFormat('mm/dd/yyyy');
 
   // before and after functions
   before(async function () {
@@ -374,7 +374,7 @@ describe('BO - Customer Service - Merchandise Returns : Update status', async ()
             await expect(isVisible, 'Returned product details are not correct!').to.be.true;
           });
         } else {
-          it('should check the file is not existing', async function () {
+          it('should check that the file is not existing', async function () {
             await testContext.addContextItem(this, 'testIdentifier', `checkFileNotExisting${index}`, baseContext);
 
             const fileName = await editMerchandiseReturnsPage.getFileName(page);

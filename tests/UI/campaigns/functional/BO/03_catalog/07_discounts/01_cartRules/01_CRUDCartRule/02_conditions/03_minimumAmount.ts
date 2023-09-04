@@ -15,7 +15,7 @@ import addCartRulePage from '@pages/BO/catalog/discounts/add';
 // Import FO pages
 import {homePage} from '@pages/FO/home';
 import {loginPage as foLoginPage} from '@pages/FO/login';
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 
 // Import data
 import CartRuleData from '@data/faker/cartRule';
@@ -144,7 +144,7 @@ describe('BO - Catalog - Cart rules : Minimum amount', async () => {
 
       await cartPage.addPromoCode(page, newCartRuleData.code);
 
-      const discount = await basicHelper.percentage(Products.demo_6.combinations[0].price * 2, newCartRuleData.discountPercent);
+      const discount = await basicHelper.percentage(Products.demo_6.combinations[0].price * 2, newCartRuleData.discountPercent!);
 
       const totalAfterDiscount = await cartPage.getATIPrice(page);
       await expect(totalAfterDiscount).to.eq(parseFloat((Products.demo_6.combinations[0].price * 2 - discount).toFixed(2)));

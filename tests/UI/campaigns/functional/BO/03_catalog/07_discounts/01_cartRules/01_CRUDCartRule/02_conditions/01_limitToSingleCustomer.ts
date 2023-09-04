@@ -15,9 +15,9 @@ import addCartRulePage from '@pages/BO/catalog/discounts/add';
 // Import FO pages
 import {homePage} from '@pages/FO/home';
 import {loginPage as foLoginPage} from '@pages/FO/login';
-import foMyAccountPage from '@pages/FO/myAccount';
+import {myAccountPage} from '@pages/FO/myAccount';
 import foVouchersPage from '@pages/FO/myAccount/vouchers';
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 
 // Import data
 import CartRuleData from '@data/faker/cartRule';
@@ -133,7 +133,7 @@ describe('BO - Catalog - Cart rules : Limit to single customer', async () => {
       await testContext.addContextItem(this, 'testIdentifier', 'goToFOVouchersPage', baseContext);
 
       await homePage.goToMyAccountPage(page);
-      await foMyAccountPage.goToVouchersPage(page);
+      await myAccountPage.goToVouchersPage(page);
 
       const pageHeaderTitle = await foVouchersPage.getPageTitle(page);
       await expect(pageHeaderTitle).to.equal(foVouchersPage.pageTitle);
@@ -143,7 +143,7 @@ describe('BO - Catalog - Cart rules : Limit to single customer', async () => {
       {args: {column: 'code', value: ''}},
       {args: {column: 'description', value: newCartRuleData.name}},
       {args: {column: 'quantity', value: '1'}},
-      {args: {column: 'value', value: '20.00%'}},
+      {args: {column: 'value', value: '20%'}},
       {args: {column: 'minimum', value: 'None'}},
       {args: {column: 'cumulative', value: 'Yes'}},
       {args: {column: 'expiration_date', value: expirationDate}},

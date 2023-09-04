@@ -3,11 +3,11 @@ import helper from '@utils/helpers';
 import testContext from '@utils/testContext';
 
 // Import FO pages
-import cartPage from '@pages/FO/cart';
-import contactUsPage from '@pages/FO/contactUs';
+import {cartPage} from '@pages/FO/cart';
+import {contactUsPage} from '@pages/FO/contactUs';
 import {homePage} from '@pages/FO/home';
 import {loginPage} from '@pages/FO/login';
-import myAccountPage from '@pages/FO/myAccount';
+import {myAccountPage} from '@pages/FO/myAccount';
 
 // Import data
 import Customers from '@data/demo/customers';
@@ -140,7 +140,7 @@ describe('FO - Header and Footer : Check links in header page', async () => {
   it('should check \'Logo\' link', async function () {
     await testContext.addContextItem(this, 'testIdentifier', 'checkLogoLink', baseContext);
 
-    await homePage.clickOnHeaderLink(page, 'Logo');
+    await homePage.clickOnHeaderLink(page, 'Logo', false);
 
     const pageTitle = await homePage.getPageTitle(page);
     await expect(pageTitle).to.equal(homePage.pageTitle);

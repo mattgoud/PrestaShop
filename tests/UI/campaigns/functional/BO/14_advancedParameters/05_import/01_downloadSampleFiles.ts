@@ -18,7 +18,7 @@ const baseContext: string = 'functional_BO_advancedParameters_import_downloadSam
 describe('BO - Advanced Parameters - Import : Download sample csv files', async () => {
   let browserContext: BrowserContext;
   let page: Page;
-  let filePath: string;
+  let filePath: string|null;
 
   // before and after functions
   before(async function () {
@@ -63,7 +63,7 @@ describe('BO - Advanced Parameters - Import : Download sample csv files', async 
           type: 'products_import',
           textToCheck: 'Product ID;Active (0/1);Name *;Categories (x,y,z...);Price tax excluded;Tax rules ID;'
             + 'Wholesale price;On sale (0/1);Discount amount;Discount percent;Discount from (yyyy-mm-dd);'
-            + 'Discount to (yyyy-mm-dd);Reference #;Supplier reference #;Supplier;Manufacturer;EAN13;UPC;Ecotax;'
+            + 'Discount to (yyyy-mm-dd);Reference #;Supplier reference #;Supplier;Manufacturer;EAN13;UPC;MPN;Ecotax;'
             + 'Width;Height;Depth;Weight;Delivery time of in-stock products;'
             + 'Delivery time of out-of-stock products with allowed',
         },

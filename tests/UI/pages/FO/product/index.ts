@@ -1,7 +1,9 @@
 import FOBasePage from '@pages/FO/FObasePage';
 
 import ProductReviewData from '@data/faker/productReview';
-import {ProductAttribute, ProductDetails} from '@data/types/product';
+import {
+  ProductAttribute, ProductImageUrls, ProductInformations,
+} from '@data/types/product';
 
 import type {Page} from 'playwright';
 
@@ -224,9 +226,9 @@ class Product extends FOBasePage {
   /**
    * Get product page URL
    * @param page {Page} Browser tab
-   * @returns {Promise<string|null>}
+   * @returns {Promise<string>}
    */
-  getProductPageURL(page: Page): Promise<string | null> {
+  getProductPageURL(page: Page): Promise<string> {
     return this.getAttributeContent(page, this.metaLink, 'content');
   }
 
@@ -251,9 +253,9 @@ class Product extends FOBasePage {
   /**
    * Get Product information (Product name, price, short description, description)
    * @param page {Page} Browser tab
-   * @returns {Promise<ProductDetails>}
+   * @returns {Promise<ProductInformations>}
    */
-  async getProductInformation(page: Page): Promise<ProductDetails> {
+  async getProductInformation(page: Page): Promise<ProductInformations> {
     return {
       name: await this.getTextContent(page, this.productName),
       price: await this.getPriceFromText(page, this.productPrice),
@@ -338,9 +340,9 @@ class Product extends FOBasePage {
   /**
    * Get product image urls
    * @param page {Page} Browser tab
-   * @returns {Promise<{thumbImage: string|null, coverImage: string|null}>}
+   * @returns {Promise<ProductImageUrls>}
    */
-  async getProductImageUrls(page: Page): Promise<{ thumbImage: string | null, coverImage: string | null }> {
+  async getProductImageUrls(page: Page): Promise<ProductImageUrls> {
     return {
       coverImage: await this.getAttributeContent(page, this.productCoverImg, 'src'),
       thumbImage: await this.getAttributeContent(page, this.thumbFirstImg, 'src'),
@@ -414,9 +416,9 @@ class Product extends FOBasePage {
    * Select thumb image
    * @param page {Page} Browser tab
    * @param id {number} Id for the thumb
-   * @returns {Promise<string|null>}
+   * @returns {Promise<string>}
    */
-  async selectThumbImage(page: Page, id: number): Promise<string | null> {
+  async selectThumbImage(page: Page, id: number): Promise<string> {
     if (id === 1) {
       await this.waitForSelectorAndClick(page, this.thumbFirstImg);
       await this.waitForVisibleSelector(page, `${this.thumbFirstImg}.selected`);
@@ -489,7 +491,7 @@ class Product extends FOBasePage {
 
     if (proceedToCheckout) {
       await this.waitForVisibleSelector(page, this.proceedToCheckoutButton);
-      await this.clickAndWaitForNavigation(page, this.proceedToCheckoutButton);
+      await this.clickAndWaitForURL(page, this.proceedToCheckoutButton);
       await this.waitForPageTitleToLoad(page);
     } else {
       await this.waitForSelectorAndClick(page, this.continueShoppingButton);
@@ -501,9 +503,9 @@ class Product extends FOBasePage {
    * Go to social sharing link
    * @param page {Page} Browser tab
    * @param socialSharing {string} Social network's name to get link from
-   * @returns {Promise<string|null>}
+   * @returns {Promise<string>}
    */
-  async getSocialSharingLink(page: Page, socialSharing: string): Promise<string | null> {
+  async getSocialSharingLink(page: Page, socialSharing: string): Promise<string> {
     let selector;
 
     switch (socialSharing) {
@@ -551,7 +553,7 @@ class Product extends FOBasePage {
    * @param page {Page} Browser tab
    * @returns {Promise<boolean>}
    */
-  isAvailabilityQuantityDisplayed(page: Page): Promise<boolean> {
+  async isAvailabilityQuantityDisplayed(page: Page): Promise<boolean> {
     return this.elementVisible(page, this.productAvailabilityIcon, 1000);
   }
 
@@ -560,7 +562,7 @@ class Product extends FOBasePage {
    * @param page {Page} Browser tab
    * @returns {Promise<boolean>}
    */
-  isPriceDisplayed(page: Page): Promise<boolean> {
+  async isPriceDisplayed(page: Page): Promise<boolean> {
     return this.elementVisible(page, this.productPrice, 1000);
   }
 
@@ -569,7 +571,7 @@ class Product extends FOBasePage {
    * @param page {Page} Browser tab
    * @returns {Promise<boolean>}
    */
-  isAddToCartButtonDisplayed(page: Page): Promise<boolean> {
+  async isAddToCartButtonDisplayed(page: Page): Promise<boolean> {
     return this.elementVisible(page, this.addToCartButton, 1000);
   }
 
@@ -590,7 +592,7 @@ class Product extends FOBasePage {
    * @param color {string} Product's color to check
    * @returns {Promise<boolean>}
    */
-  isUnavailableProductColorDisplayed(page: Page, color: string): Promise<boolean> {
+  async isUnavailableProductColorDisplayed(page: Page, color: string): Promise<boolean> {
     return this.elementVisible(page, this.productColorInput(color), 1000);
   }
 
@@ -599,7 +601,7 @@ class Product extends FOBasePage {
    * @param page {Page} Browser tab
    * @returns {Promise<boolean>}
    */
-  isAddToCartButtonEnabled(page: Page): Promise<boolean> {
+  async isAddToCartButtonEnabled(page: Page): Promise<boolean> {
     return this.elementNotVisible(page, `${this.addToCartButton}:disabled`, 1000);
   }
 
@@ -608,7 +610,7 @@ class Product extends FOBasePage {
    * @param page {Page} Browser tab
    * @return {Promise<boolean>}
    */
-  isDeliveryInformationVisible(page: Page): Promise<boolean> {
+  async isDeliveryInformationVisible(page: Page): Promise<boolean> {
     return this.elementVisible(page, this.deliveryInformationSpan, 1000);
   }
 
@@ -638,7 +640,7 @@ class Product extends FOBasePage {
    * @param page {Page} The browser tab
    * @returns {Promise<number>}
    */
-  getNumberOfComments(page: Page): Promise<number> {
+  async getNumberOfComments(page: Page): Promise<number> {
     return page.$$eval(this.productReviewRows, (rows) => rows.length);
   }
 
@@ -648,7 +650,7 @@ class Product extends FOBasePage {
    * @param row {Number} the review number in the list
    * @returns {Promise<string>}
    */
-  getReviewTitle(page: Page, row: number = 1): Promise<string> {
+  async getReviewTitle(page: Page, row: number = 1): Promise<string> {
     return this.getTextContent(page, this.productReviewTitle(row));
   }
 
@@ -658,7 +660,7 @@ class Product extends FOBasePage {
    * @param row {Number} the review number in the list
    * @returns {Promise<string>}
    */
-  getReviewTextContent(page: Page, row: number = 1): Promise<string> {
+  async getReviewTextContent(page: Page, row: number = 1): Promise<string> {
     return this.getTextContent(page, this.productReviewContent(row));
   }
 
@@ -668,7 +670,7 @@ class Product extends FOBasePage {
    * @param row {Number} the review number in the list
    * @returns {Promise<number>}
    */
-  getReviewRating(page: Page, row: number = 1): Promise<number> {
+  async getReviewRating(page: Page, row: number = 1): Promise<number> {
     return page.$$eval(this.productRatingStar(row), (divs) => divs.length);
   }
 }

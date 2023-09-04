@@ -1,10 +1,12 @@
 // Import utils
 import files from '@utils/files';
 import helper from '@utils/helpers';
+import mailHelper from '@utils/mailHelper';
 import testContext from '@utils/testContext';
 import loginCommon from '@commonTests/BO/loginBO';
 
 // Import commonTests
+import {resetSmtpConfigTest, setupSmtpConfigTest} from '@commonTests/BO/advancedParameters/smtp';
 import {createAddressTest} from '@commonTests/BO/customers/address';
 import {deleteCustomerTest} from '@commonTests/BO/customers/customer';
 import {createAccountTest} from '@commonTests/FO/account';
@@ -13,7 +15,7 @@ import {createOrderByCustomerTest} from '@commonTests/FO/order';
 // Import pages
 // Import BO pages
 import dashboardPage from '@pages/BO/dashboard';
-import myAccountPage from '@pages/FO/myAccount';
+import {myAccountPage} from '@pages/FO/myAccount';
 import creditSlipsPage from '@pages/FO/myAccount/creditSlips';
 import orderDetailsPage from '@pages/FO/myAccount/orderDetails';
 import ordersPage from '@pages/BO/orders';
@@ -31,9 +33,11 @@ import Products from '@data/demo/products';
 import AddressData from '@data/faker/address';
 import CustomerData from '@data/faker/customer';
 import OrderData from '@data/faker/order';
+import type MailDevEmail from '@data/types/maildevEmail';
 
 import {expect} from 'chai';
 import type {BrowserContext, Page} from 'playwright';
+import type MailDev from 'maildev';
 
 const baseContext: string = 'functional_FO_classic_userAccount_creditSlips_consultCreditSlip';
 
@@ -55,7 +59,9 @@ describe('FO - Consult credit slip list & View PDF Credit slip & View order', as
   let orderReference: string;
   let creditSlipID: string;
   let dateIssued: string;
-  let filePath: string;
+  let filePath: string|null;
+  let newMail: MailDevEmail;
+  let mailListener: MailDev;
 
   const customerData: CustomerData = new CustomerData();
   const addressData: AddressData = new AddressData({
@@ -79,16 +85,30 @@ describe('FO - Consult credit slip list & View PDF Credit slip & View order', as
   createAddressTest(addressData, `${baseContext}_preTest_2`);
   // Pre-condition: Create order
   createOrderByCustomerTest(orderData, `${baseContext}_preTest_3`);
+  // Pre-Condition: Setup config SMTP
+  setupSmtpConfigTest(`${baseContext}_preTest_4`);
 
   // before and after functions
   before(async function () {
     browserContext = await helper.createBrowserContext(this.browser);
     page = await helper.newTab(browserContext);
+
+    // Start listening to maildev server
+    mailListener = mailHelper.createMailListener();
+    mailHelper.startListener(mailListener);
+
+    // Handle every new email
+    mailListener.on('new', (email: MailDevEmail) => {
+      newMail = email;
+    });
   });
 
   after(async () => {
     await files.deleteFile(filePath);
     await helper.closeBrowserContext(browserContext);
+
+    // Stop listening to maildev server
+    mailHelper.stopListener(mailListener);
   });
 
   describe('Consult Credit slip list in FO', async () => {
@@ -195,6 +215,13 @@ describe('FO - Consult credit slip list & View PDF Credit slip & View order', as
 
         const textMessage = await viewOrderProductsBlockPage.addPartialRefundProduct(page, 1, 1);
         await expect(textMessage).to.contains(viewOrderProductsBlockPage.partialRefundValidationMessage);
+      });
+
+      it('should check if the mail is in mailbox', async function () {
+        await testContext.addContextItem(this, 'testIdentifier', 'checkIfMailIsInMailbox', baseContext);
+
+        await expect(newMail.subject).to.eq(`[${global.INSTALL.SHOP_NAME}] New credit slip regarding your order`);
+        await expect(newMail.text).to.contains('A credit slip has been generated in your name for order with the reference');
       });
 
       it('should check if \'Credit slip\' document is created', async function () {
@@ -351,11 +378,6 @@ describe('FO - Consult credit slip list & View PDF Credit slip & View order', as
       it('should go to credit slips page', async function () {
         await testContext.addContextItem(this, 'testIdentifier', 'goToCreditSlipsPage4', baseContext);
 
-        await homePage.goToMyAccountPage(page);
-
-        const myAccountPageTitle = await myAccountPage.getPageTitle(page);
-        await expect(myAccountPageTitle).to.equal(myAccountPage.pageTitle);
-
         await myAccountPage.goToCreditSlipsPage(page);
 
         const creditSlipsPageTitle = await creditSlipsPage.getPageTitle(page);
@@ -374,5 +396,7 @@ describe('FO - Consult credit slip list & View PDF Credit slip & View order', as
   });
 
   // Post-condition: Delete the created customer account
-  deleteCustomerTest(customerData, `${baseContext}_postTest`);
+  deleteCustomerTest(customerData, `${baseContext}_postTest_1`);
+  // Post-Condition: Reset SMTP config
+  resetSmtpConfigTest(`${baseContext}_postTest_2`);
 });

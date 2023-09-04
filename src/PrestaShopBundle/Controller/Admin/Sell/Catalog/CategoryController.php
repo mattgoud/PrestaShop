@@ -121,7 +121,7 @@ class CategoryController extends FrameworkBundleAdminController
             'enableSidebar' => true,
             'categoriesGrid' => $this->presentGrid($categoryGrid),
             'categoriesKpi' => $categoriesKpiFactory->build(),
-            'layoutHeaderToolbarBtn' => $this->getCategoryToolbarButtons($request, $currentCategoryId),
+            'layoutHeaderToolbarBtn' => $this->getCategoryIndexToolbarButtons($request, $currentCategoryId),
             'currentCategoryView' => $categoryViewData,
             'deleteCategoriesForm' => $deleteCategoriesForm->createView(),
             'isSingleShopContext' => $this->get('prestashop.adapter.shop.context')->isSingleShopContext(),
@@ -572,12 +572,12 @@ class CategoryController extends FrameworkBundleAdminController
      *     redirectRoute="admin_categories_index",
      *     message="You do not have permission to update this."
      * )
-     * @DemoRestricted(redirectRoute="admin_categories_index")
      *
      * @param Request $request
      *
      * @return RedirectResponse
      */
+    #[DemoRestricted(redirectRoute: 'admin_categories_index')]
     public function bulkEnableStatusAction(Request $request)
     {
         try {
@@ -606,12 +606,12 @@ class CategoryController extends FrameworkBundleAdminController
      *     redirectRoute="admin_categories_index",
      *     message="You do not have permission to update this."
      * )
-     * @DemoRestricted(redirectRoute="admin_categories_index")
      *
      * @param Request $request
      *
      * @return RedirectResponse
      */
+    #[DemoRestricted(redirectRoute: 'admin_categories_index')]
     public function bulkDisableStatusAction(Request $request)
     {
         try {
@@ -640,12 +640,12 @@ class CategoryController extends FrameworkBundleAdminController
      *     redirectRoute="admin_categories_index",
      *     message="You do not have permission to delete this."
      * )
-     * @DemoRestricted(redirectRoute="admin_categories_index")
      *
      * @param Request $request
      *
      * @return RedirectResponse
      */
+    #[DemoRestricted(redirectRoute: 'admin_categories_index')]
     public function bulkDeleteAction(Request $request)
     {
         $deleteCategoriesForm = $this->createForm(DeleteCategoriesType::class);
@@ -669,7 +669,7 @@ class CategoryController extends FrameworkBundleAdminController
 
                 $this->addFlash(
                     'success',
-                    $this->trans('The selection has been successfully deleted', 'Admin.Notifications.Success')
+                    $this->trans('The selection has been successfully deleted.', 'Admin.Notifications.Success')
                 );
             } catch (CategoryException $e) {
                 $this->addFlash('error', $this->getErrorMessageForException($e, $this->getErrorMessages()));
@@ -687,12 +687,12 @@ class CategoryController extends FrameworkBundleAdminController
      *     redirectRoute="admin_categories_index",
      *     message="You do not have permission to delete this."
      * )
-     * @DemoRestricted(redirectRoute="admin_categories_index")
      *
      * @param Request $request
      *
      * @return RedirectResponse
      */
+    #[DemoRestricted(redirectRoute: 'admin_categories_index')]
     public function deleteAction(Request $request)
     {
         $deleteCategoriesForm = $this->createForm(DeleteCategoriesType::class);
@@ -728,12 +728,12 @@ class CategoryController extends FrameworkBundleAdminController
      *     redirectRoute="admin_categories_index",
      *     message="You do not have permission to view this."
      * )
-     * @DemoRestricted(redirectRoute="admin_categories_index")
      *
      * @param CategoryFilters $filters
      *
      * @return Response
      */
+    #[DemoRestricted(redirectRoute: 'admin_categories_index')]
     public function exportAction(CategoryFilters $filters)
     {
         $filters = new CategoryFilters(['limit' => null] + $filters->all());
@@ -785,7 +785,7 @@ class CategoryController extends FrameworkBundleAdminController
                 $request->request->getInt('id_category_to_move'),
                 $request->request->getInt('id_category_parent'),
                 $request->request->getInt('way'),
-                $request->request->get('positions'),
+                $request->request->all('positions'),
                 $request->request->getBoolean('found_first')
             ));
         } catch (CategoryException $e) {
@@ -872,9 +872,15 @@ class CategoryController extends FrameworkBundleAdminController
      *
      * @return array
      */
-    private function getCategoryToolbarButtons(Request $request, int $categoryId): array
+    private function getCategoryIndexToolbarButtons(Request $request, int $categoryId): array
     {
         $toolbarButtons = [];
+
+        $toolbarButtons['edit'] = [
+            'href' => $this->generateUrl('admin_categories_edit', ['categoryId' => $categoryId]),
+            'desc' => $this->trans('Edit category', 'Admin.Catalog.Feature'),
+            'icon' => 'mode_edit',
+        ];
 
         if ($this->get('prestashop.adapter.feature.multistore')->isUsed()) {
             $toolbarButtons['add_root'] = [
@@ -913,7 +919,7 @@ class CategoryController extends FrameworkBundleAdminController
     {
         return [
             CannotDeleteImageException::class => $this->trans('Unable to delete associated images.', 'Admin.Notifications.Error'),
-            CategoryNotFoundException::class => $this->trans('The object cannot be loaded (or found)', 'Admin.Notifications.Error'),
+            CategoryNotFoundException::class => $this->trans('The object cannot be loaded (or found).', 'Admin.Notifications.Error'),
             CategoryConstraintException::class => [
                 CategoryConstraintException::EMPTY_BULK_DELETE_DATA => $this->trans('You must select at least one element to delete.', 'Admin.Notifications.Error'),
                 CategoryConstraintException::TOO_MANY_MENU_THUMBNAILS => sprintf(
@@ -966,11 +972,7 @@ class CategoryController extends FrameworkBundleAdminController
      */
     private function getBulkCategoriesFromRequest(Request $request)
     {
-        $categoryIds = $request->request->get('category_id_category');
-
-        if (!is_array($categoryIds)) {
-            return [];
-        }
+        $categoryIds = $request->request->all('category_id_category');
 
         foreach ($categoryIds as $i => $categoryId) {
             $categoryIds[$i] = (int) $categoryId;

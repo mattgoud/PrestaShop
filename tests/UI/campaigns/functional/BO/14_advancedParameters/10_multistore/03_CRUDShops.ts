@@ -4,15 +4,14 @@ import testContext from '@utils/testContext';
 
 // Import commonTests
 import loginCommon from '@commonTests/BO/loginBO';
+import setMultiStoreStatus from '@commonTests/BO/advancedParameters/multistore';
 
 // Import pages
 import dashboardPage from '@pages/BO/dashboard';
-import generalPage from '@pages/BO/shopParameters/general';
 import multiStorePage from '@pages/BO/advancedParameters/multistore';
 import addShopPage from '@pages/BO/advancedParameters/multistore/shop/add';
 import addShopUrlPage from '@pages/BO/advancedParameters/multistore/url/addURL';
 import shopPage from '@pages/BO/advancedParameters/multistore/shop';
-import shopUrlPage from '@pages/BO/advancedParameters/multistore/url';
 
 // Import data
 import ShopData from '@data/faker/shop';
@@ -27,9 +26,12 @@ describe('BO - Advanced Parameters - Multistore : Create, Read, Update and Delet
   let browserContext: BrowserContext;
   let page: Page;
 
-  let shopID: string = '0';
+  let shopID: number = 0;
   const createShopData: ShopData = new ShopData({shopGroup: 'Default', categoryRoot: 'Home'});
   const updateShopData: ShopData = new ShopData({shopGroup: 'Default', categoryRoot: 'Home'});
+
+  //Pre-condition: Enable multistore
+  setMultiStoreStatus(true, `${baseContext}_preTest`);
 
   // before and after functions
   before(async function () {
@@ -41,36 +43,12 @@ describe('BO - Advanced Parameters - Multistore : Create, Read, Update and Delet
     await helper.closeBrowserContext(browserContext);
   });
 
-  it('should login in BO', async function () {
-    await loginCommon.loginBO(this, page);
-  });
-
-  // 1 : Enable multi store
-  describe('Enable \'Multistore\'', async () => {
-    it('should go to \'Shop parameters > General\' page', async function () {
-      await testContext.addContextItem(this, 'testIdentifier', 'goToGeneralPage', baseContext);
-
-      await dashboardPage.goToSubMenu(
-        page,
-        dashboardPage.shopParametersParentLink,
-        dashboardPage.shopParametersGeneralLink,
-      );
-      await generalPage.closeSfToolBar(page);
-
-      const pageTitle = await generalPage.getPageTitle(page);
-      await expect(pageTitle).to.contains(generalPage.pageTitle);
-    });
-
-    it('should enable \'Multistore\'', async function () {
-      await testContext.addContextItem(this, 'testIdentifier', 'enableMultiStore', baseContext);
-
-      const result = await generalPage.setMultiStoreStatus(page, true);
-      await expect(result).to.contains(generalPage.successfulUpdateMessage);
-    });
-  });
-
   // 2 : Create shop
   describe('Create shop', async () => {
+    it('should login in BO', async function () {
+      await loginCommon.loginBO(this, page);
+    });
+
     it('should go to \'Advanced Parameters > Multistore\' page', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'goToMultiStorePage', baseContext);
 
@@ -107,7 +85,7 @@ describe('BO - Advanced Parameters - Multistore : Create, Read, Update and Delet
       const numberOfShops = await shopPage.getNumberOfElementInGrid(page);
       await expect(numberOfShops).to.be.above(0);
 
-      shopID = await shopPage.getTextColumn(page, 1, 'id_shop');
+      shopID = parseInt(await shopPage.getTextColumn(page, 1, 'id_shop'), 10);
     });
   });
 
@@ -148,18 +126,8 @@ describe('BO - Advanced Parameters - Multistore : Create, Read, Update and Delet
     });
   });
 
-  // 4 : Delete shop URL
-  describe('delete shop URL', async () => {
-    it('should delete the shop URL', async function () {
-      await testContext.addContextItem(this, 'testIdentifier', 'deleteShopURL', baseContext);
-
-      const textResult = await shopUrlPage.deleteShopURL(page, 1);
-      await expect(textResult).to.contains(shopPage.successfulDeleteMessage);
-    });
-  });
-
   // 4 : Delete the shop
-  describe('delete shop', async () => {
+  describe('Delete shop', async () => {
     it('should go to the created shop page', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'goToCreatedShopPage', baseContext);
 
@@ -179,27 +147,6 @@ describe('BO - Advanced Parameters - Multistore : Create, Read, Update and Delet
     });
   });
 
-  // 5 : Disable multi store
-  describe('Disable \'Multistore\'', async () => {
-    it('should go to \'Shop parameters > General\' page', async function () {
-      await testContext.addContextItem(this, 'testIdentifier', 'goToGeneralPage2', baseContext);
-
-      await dashboardPage.goToSubMenu(
-        page,
-        dashboardPage.shopParametersParentLink,
-        dashboardPage.shopParametersGeneralLink,
-      );
-      await generalPage.closeSfToolBar(page);
-
-      const pageTitle = await generalPage.getPageTitle(page);
-      await expect(pageTitle).to.contains(generalPage.pageTitle);
-    });
-
-    it('should disable \'Multistore\'', async function () {
-      await testContext.addContextItem(this, 'testIdentifier', 'disableMultiStore', baseContext);
-
-      const result = await generalPage.setMultiStoreStatus(page, false);
-      await expect(result).to.contains(generalPage.successfulUpdateMessage);
-    });
-  });
+  // Post-condition : Disable multi store
+  setMultiStoreStatus(false, `${baseContext}_postTest`);
 });

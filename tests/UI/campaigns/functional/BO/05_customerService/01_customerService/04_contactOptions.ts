@@ -11,7 +11,7 @@ import customerServicePage from '@pages/BO/customerService/customerService';
 import viewPage from '@pages/BO/customerService/customerService/view';
 import dashboardPage from '@pages/BO/dashboard';
 // Import FO pages
-import contactUsPage from '@pages/FO/contactUs';
+import {contactUsPage} from '@pages/FO/contactUs';
 import {homePage} from '@pages/FO/home';
 
 // Import data
@@ -193,27 +193,8 @@ describe('BO - Customer Service : Contact options', async () => {
   });
 
   describe('BO : Delete the order message', async () => {
-    it('should go to \'Customer Service > Customer Service\' page', async function () {
-      await testContext.addContextItem(this, 'testIdentifier', 'goToOrderMessagesPageToDelete', baseContext);
-
-      await dashboardPage.goToSubMenu(
-        page,
-        dashboardPage.customerServiceParentLink,
-        dashboardPage.customerServiceLink,
-      );
-
-      const pageTitle = await customerServicePage.getPageTitle(page);
-      await expect(pageTitle).to.contains(customerServicePage.pageTitle);
-    });
-
     it('should delete the message', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'deleteMessage', baseContext);
-
-      await dashboardPage.goToSubMenu(
-        page,
-        dashboardPage.customerServiceParentLink,
-        dashboardPage.customerServiceLink,
-      );
 
       const textResult = await customerServicePage.deleteMessage(page, 1);
       await expect(textResult).to.contains(customerServicePage.successfulDeleteMessage);

@@ -129,7 +129,7 @@ describe('BO - Design - Image Settings - Check product image format', async () =
     {
       product: productDataPNG,
       extOriginal: 'png',
-      extGenerated: 'jpg',
+      extGenerated: 'png',
     },
     {
       product: productDataJPG,
@@ -139,7 +139,7 @@ describe('BO - Design - Image Settings - Check product image format', async () =
     {
       product: productDataWEBP,
       extOriginal: 'webp',
-      extGenerated: 'webp',
+      extGenerated: 'jpg',
     },
   ].forEach((arg: {product: ProductData, extOriginal: string, extGenerated: string}, index: number) => {
     describe(`Image Generation - Product - Image Format : ${arg.extOriginal.toUpperCase()}`, async () => {
@@ -147,6 +147,7 @@ describe('BO - Design - Image Settings - Check product image format', async () =
         it('should go to BO', async function () {
           await testContext.addContextItem(this, 'testIdentifier', `goToBoProducts${arg.extOriginal}`, baseContext);
 
+          page = await categoryPage.closePage(browserContext, page, 0);
           await categoryPage.goToBO(page);
 
           const pageTitle = await dashboardPage.getPageTitle(page);
@@ -225,8 +226,7 @@ describe('BO - Design - Image Settings - Check product image format', async () =
         await expect(idProduct).to.be.gt(0);
       });
 
-      // @todo : https://github.com/PrestaShop/PrestaShop/issues/32265
-      it.skip('should check that images are generated', async function () {
+      it('should check that images are generated', async function () {
         await testContext.addContextItem(this, 'testIdentifier', `checkProductImages${arg.extOriginal}`, baseContext);
 
         const pathProductIdSplitted: RegExpMatchArray|null = idProductImage.toString().match(/./g);
@@ -238,13 +238,25 @@ describe('BO - Design - Image Settings - Check product image format', async () =
         const pathProductId: string = pathProductIdSplitted.join('/');
 
         // Check the original file
+        const pathImageOriginal: string = `${files.getRootPath()}/img/p/${pathProductId}/${idProductImage}.jpg`;
+
+        const fileExistsOriginal = await files.doesFileExist(pathImageOriginal);
+        await expect(fileExistsOriginal, `The file ${pathImageOriginal} doesn't exist!`).to.be.true;
+
+        // @todo : https://github.com/PrestaShop/PrestaShop/issues/32265
+        if (arg.extOriginal !== 'webp') {
+          const imageTypeOriginal = await files.getImageType(pathImageOriginal);
+          await expect(imageTypeOriginal).to.be.eq(arg.extOriginal);
+        }
+
+        // Check the Jpg file
         const pathImageJPG: string = `${files.getRootPath()}/img/p/${pathProductId}/${idProductImage}-large_default.jpg`;
 
         const fileExistsJPG = await files.doesFileExist(pathImageJPG);
         await expect(fileExistsJPG, `The file ${pathImageJPG} doesn't exist!`).to.be.true;
 
         const imageTypeJPG = await files.getImageType(pathImageJPG);
-        await expect(imageTypeJPG).to.be.eq(arg.extOriginal);
+        await expect(imageTypeJPG).to.be.eq(arg.extGenerated);
 
         // Check the WebP file
         const pathImageWEBP: string = `${files.getRootPath()}/img/p/${pathProductId}/${idProductImage}-large_default.webp`;
@@ -292,7 +304,6 @@ describe('BO - Design - Image Settings - Check product image format', async () =
       it('should check that the main image of the quick view is a WebP', async function () {
         await testContext.addContextItem(this, 'testIdentifier', `checkMainImageQuickView${arg.extOriginal}`, baseContext);
 
-        // https://github.com/PrestaShop/PrestaShop/issues/32265
         const quickViewImageMain = await categoryPage.getQuickViewImageMain(page);
         await expect(quickViewImageMain).to.be.not.null;
 

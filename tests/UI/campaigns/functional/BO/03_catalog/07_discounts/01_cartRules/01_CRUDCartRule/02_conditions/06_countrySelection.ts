@@ -14,7 +14,7 @@ import dashboardPage from '@pages/BO/dashboard';
 import zonesPage from '@pages/BO/international/locations';
 import countriesPage from '@pages/BO/international/locations/countries';
 // Import FO pages
-import cartPage from '@pages/FO/cart';
+import {cartPage} from '@pages/FO/cart';
 import checkoutPage from '@pages/FO/checkout';
 import {homePage as foHomePage} from '@pages/FO/home';
 import foProductPage from '@pages/FO/product';
@@ -248,7 +248,7 @@ describe('BO - Catalog - Cart rules : Country selection', async () => {
       await testContext.addContextItem(this, 'testIdentifier', 'checkTotalAfterDiscount', baseContext);
 
       const totalAfterDiscount = await checkoutPage.getATIPrice(page);
-      await expect(totalAfterDiscount).to.eq(Products.demo_6.price - cartRule.discountAmount.value + Carriers.myCarrier.price);
+      await expect(totalAfterDiscount).to.eq(Products.demo_6.price - cartRule.discountAmount!.value + Carriers.myCarrier.price);
     });
 
     it('should remove the discount', async function () {

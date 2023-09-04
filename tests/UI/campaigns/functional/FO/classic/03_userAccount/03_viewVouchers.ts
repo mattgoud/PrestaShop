@@ -11,7 +11,7 @@ import {createAccountTest} from '@commonTests/FO/account';
 // Import FO pages
 import {homePage} from '@pages/FO/home';
 import {loginPage as foLoginPage} from '@pages/FO/login';
-import foMyAccountPage from '@pages/FO/myAccount';
+import {myAccountPage} from '@pages/FO/myAccount';
 import foVouchersPage from '@pages/FO/myAccount/vouchers';
 
 // Import data
@@ -108,7 +108,7 @@ describe('FO - Account : View vouchers', async () => {
       await testContext.addContextItem(this, 'testIdentifier', 'goToFOVouchersPage', baseContext);
 
       await homePage.goToMyAccountPage(page);
-      await foMyAccountPage.goToVouchersPage(page);
+      await myAccountPage.goToVouchersPage(page);
 
       const pageHeaderTitle = await foVouchersPage.getPageTitle(page);
       await expect(pageHeaderTitle).to.equal(foVouchersPage.pageTitle);
@@ -118,7 +118,7 @@ describe('FO - Account : View vouchers', async () => {
       {args: {column: 'code', row: 1, value: firstCartRule.code}},
       {args: {column: 'description', row: 1, value: firstCartRule.name}},
       {args: {column: 'quantity', row: 1, value: '1'}},
-      {args: {column: 'value', row: 1, value: '20.00%'}},
+      {args: {column: 'value', row: 1, value: '20%'}},
       {args: {column: 'minimum', row: 1, value: 'None'}},
       {args: {column: 'cumulative', row: 1, value: 'Yes'}},
       {args: {column: 'expiration_date', row: 1, value: expirationDate}},

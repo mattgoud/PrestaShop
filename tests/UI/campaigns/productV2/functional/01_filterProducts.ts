@@ -7,10 +7,6 @@ import testContext from '@utils/testContext';
 
 // Import common tests
 import loginCommon from '@commonTests/BO/loginBO';
-import {
-  enableNewProductPageTest,
-  resetNewProductPageAsDefault,
-} from '@commonTests/BO/advancedParameters/newFeatures';
 
 // Import pages
 import dashboardPage from '@pages/BO/dashboard';
@@ -19,6 +15,7 @@ import productsPage from '@pages/BO/catalog/productsV2';
 // Import data
 import Products from '@data/demo/products';
 import Categories from '@data/demo/categories';
+import {ProductFilterMinMax} from '@data/types/product';
 
 const baseContext: string = 'productV2_functional_filterProducts';
 
@@ -26,9 +23,6 @@ describe('BO - Catalog - Products : Filter in Products Page', async () => {
   let browserContext: BrowserContext;
   let page: Page;
   let numberOfProducts: number = 0;
-
-  // Pre-condition: Enable new product page
-  enableNewProductPageTest(`${baseContext}_enableNewProduct`);
 
   // before and after functions
   before(async function () {
@@ -116,7 +110,7 @@ describe('BO - Catalog - Products : Filter in Products Page', async () => {
         args: {
           identifier: 'filterIDMinMax',
           filterBy: 'id_product',
-          filterValue: {min: 5, max: 10},
+          filterValue: {min: 5, max: 10} as ProductFilterMinMax,
           filterType: 'input',
           comparisonType: 'toWithinMinMax',
         },
@@ -149,7 +143,7 @@ describe('BO - Catalog - Products : Filter in Products Page', async () => {
         args: {
           identifier: 'filterPriceMinMax',
           filterBy: 'price',
-          filterValue: {min: 5, max: 10},
+          filterValue: {min: 5, max: 10} as ProductFilterMinMax,
           filterType: 'input',
           comparisonType: 'toWithinMinMax',
         },
@@ -158,7 +152,7 @@ describe('BO - Catalog - Products : Filter in Products Page', async () => {
         args: {
           identifier: 'filterQuantityMinMax',
           filterBy: 'quantity',
-          filterValue: {min: 100, max: 1000},
+          filterValue: {min: 100, max: 1000} as ProductFilterMinMax,
           filterType: 'input',
           comparisonType: 'toWithinMinMax',
         },
@@ -191,7 +185,10 @@ describe('BO - Catalog - Products : Filter in Products Page', async () => {
 
           switch (test.args.comparisonType) {
             case 'toWithinMinMax':
-              await expect(textColumn).to.within(test.args.filterValue.min, test.args.filterValue.max);
+              await expect(typeof test.args.filterValue).to.be.eq('object');
+              if (typeof test.args.filterValue !== 'string') {
+                await expect(textColumn).to.within(test.args.filterValue.min, test.args.filterValue.max);
+              }
               break;
 
             case 'toBeTrue':
@@ -215,7 +212,7 @@ describe('BO - Catalog - Products : Filter in Products Page', async () => {
     it('should filter list by \'Status\' No and check result', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'filterByStatusNo', baseContext);
 
-      await productsPage.filterProducts(page, 'active', false, 'select');
+      await productsPage.filterProducts(page, 'active', 'No', 'select');
 
       const textColumn = await productsPage.getTextForEmptyTable(page);
       await expect(textColumn).to.equal('warning No records found');
@@ -260,15 +257,6 @@ describe('BO - Catalog - Products : Filter in Products Page', async () => {
       await expect(isVisible).to.be.true;
     });
 
-    it('should filter list by \'Position\' and check result', async function () {
-      await testContext.addContextItem(this, 'testIdentifier', 'filterByPosition', baseContext);
-
-      await productsPage.filterProducts(page, 'position', 1, 'input');
-
-      const position = await productsPage.getTextColumn(page, 'position');
-      await expect(position).to.equal(1);
-    });
-
     it('should reset filter', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'resetFilterByPosition', baseContext);
 
@@ -299,7 +287,4 @@ describe('BO - Catalog - Products : Filter in Products Page', async () => {
       await expect(isVisible).to.be.false;
     });
   });
-
-  // Post-condition: Reset initial state
-  resetNewProductPageAsDefault(`${baseContext}_resetNewProduct`);
 });

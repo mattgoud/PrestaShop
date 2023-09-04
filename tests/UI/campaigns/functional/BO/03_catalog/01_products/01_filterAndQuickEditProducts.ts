@@ -5,11 +5,12 @@ import testContext from '@utils/testContext';
 // Import commonTests
 import loginCommon from '@commonTests/BO/loginBO';
 import {
-  disableNewProductPageTest,
+  setFeatureFlag,
   resetNewProductPageAsDefault,
 } from '@commonTests/BO/advancedParameters/newFeatures';
 
 // Import pages
+import featureFlagPage from '@pages/BO/advancedParameters/featureFlag';
 import dashboardPage from '@pages/BO/dashboard';
 import productsPage from '@pages/BO/catalog/products';
 
@@ -29,7 +30,7 @@ describe('BO - Catalog - Products : Filter and quick edit Products table', async
   let filterValue: string = '';
 
   // Pre-condition: Disable new product page
-  disableNewProductPageTest(`${baseContext}_disableNewProduct`);
+  setFeatureFlag(featureFlagPage.featureFlagProductPageV2, false, `${baseContext}_disableNewProduct`);
 
   // before and after functions
   before(async function () {
@@ -41,7 +42,7 @@ describe('BO - Catalog - Products : Filter and quick edit Products table', async
     await helper.closeBrowserContext(browserContext);
   });
 
-  describe('GEt number of products', async () => {
+  describe('Get the number of products', async () => {
     it('should login in BO', async function () {
       await loginCommon.loginBO(this, page);
     });
@@ -159,7 +160,7 @@ describe('BO - Catalog - Products : Filter and quick edit Products table', async
             const textColumn = await productsPage.getTextColumn(page, test.args.filterBy, i);
 
             if (typeof test.args.filterValue === 'object') {
-              await expect(textColumn).to.within(test.args.filterValue.min, test.args.filterValue.max);
+              await expect(parseFloat(textColumn)).to.within(test.args.filterValue.min, test.args.filterValue.max);
             } else {
               await expect(textColumn).to.contains(test.args.filterValue);
             }

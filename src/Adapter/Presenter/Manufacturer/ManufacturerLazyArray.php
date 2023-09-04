@@ -66,26 +66,7 @@ class ManufacturerLazyArray extends AbstractLazyArray
         $this->link = $link;
 
         parent::__construct();
-    }
-
-    /**
-     * @arrayAccess
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->manufacturer['id_manufacturer'];
-    }
-
-    /**
-     * @arrayAccess
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->manufacturer['name'];
+        $this->appendArray($this->manufacturer);
     }
 
     /**
@@ -96,26 +77,6 @@ class ManufacturerLazyArray extends AbstractLazyArray
     public function getText()
     {
         return $this->manufacturer['short_description'];
-    }
-
-    /**
-     * @arrayAccess
-     *
-     * @return string
-     */
-    public function getShortDescription()
-    {
-        return $this->manufacturer['short_description'];
-    }
-
-    /**
-     * @arrayAccess
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->manufacturer['description'];
     }
 
     /**
