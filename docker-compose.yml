@@ -2,7 +2,7 @@ version: '2.1'
 
 volumes:
   db-data:
-    name: db-data
+    name: db-data-matt-ps-puik
   vendor:
     name: vendor
   var:
