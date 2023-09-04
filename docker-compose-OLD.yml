@@ -53,4 +53,4 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./:/var/www/html
+      - ./:/var/www/html:delegated
