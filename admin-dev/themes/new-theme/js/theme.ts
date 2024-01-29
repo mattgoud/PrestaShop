@@ -25,6 +25,9 @@
 
 // Dependencies
 
+import {
+  initWeb, PuikAlertCe, PuikButtonCe,
+} from '@prestashopcorp/puik-web-components';
 import 'prestakit/dist/js/prestashop-ui-kit';
 import 'jquery-ui-dist/jquery-ui';
 import 'bootstrap-tokenfield';
@@ -73,3 +76,6 @@ $(() => {
   initNumberCommaTransformer('.js-comma-transformer');
   watchSymfonyDebugBar();
 });
+
+initWeb('button-web', PuikButtonCe);
+initWeb('alert-web', PuikAlertCe);

@@ -22,6 +22,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  */
+
 import ResetThemeLayoutsHandler from './reset-theme-layouts-handler';
 import UseThemeHandler from './use-theme-handler';
 import MultiStoreRestrictionField from '../../components/multi-store-restriction-field/multi-store-restriction-field';

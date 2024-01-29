@@ -17,6 +17,11 @@
   "author": "PrestaShop",
   "license": "OSL-3.0",
   "dependencies": {
+    "@prestashopcorp/puik-components": "file:/home/mattgoud/squad-compliance/puik/packages-tars/prestashopcorp-puik-components-0.0.1.tgz",
+    "@prestashopcorp/puik-theme": "file:/home/mattgoud/squad-compliance/puik/packages-tars/prestashopcorp-puik-theme-0.0.1.tgz",
+    "@prestashopcorp/puik-resolver": "file:/home/mattgoud/squad-compliance/puik/packages-tars/prestashopcorp-puik-resolver-0.0.1.tgz",
+    "@prestashopcorp/puik-web-components": "file:/home/mattgoud/squad-compliance/puik/packages-tars/prestashopcorp-puik-web-components-0.0.1.tgz",
+    "@prestashopcorp/puik-tailwind-preset": "file:/home/mattgoud/squad-compliance/puik/packages-tars/prestashopcorp-puik-tailwind-preset-0.0.1.tgz",
     "bignumber.js": "^9.0.1",
     "bootstrap-colorpicker": "^3.2.0",
     "bootstrap-tokenfield": "^0.12.0",
@@ -53,8 +58,8 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.18.9",
     "@babel/core": "^7.15.7",
+    "@babel/eslint-parser": "^7.18.9",
     "@types/bootstrap": "^4.5.0",
     "@types/dropzone": "^5.7.4",
     "@types/jquery": "^3.5.5",
@@ -91,10 +96,10 @@
     "imports-loader": "^4.0.1",
     "mini-css-extract-plugin": "^2.6.1",
     "mocha": "^6",
-    "sass-embedded": "^1.55.0",
     "path": "^0.12.7",
     "postcss-loader": "^7.0.1",
     "postcss-preset-env": "^7.8.2",
+    "sass-embedded": "^1.55.0",
     "sass-loader": "^13.0.2",
     "style-loader": "^3.3.1",
     "stylelint": "^14.1.0",
