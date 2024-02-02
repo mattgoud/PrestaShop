@@ -38,187 +38,468 @@
 
 {% block content %}
 
-	<div class="puik-card puik-card--default mb-4">
+  <div class="puik-card puik-card--default mb-4">
 
-		<button-web size="sm" variant="primary" :fluid="false" :wrap-label="true" :disabled="false" left-icon="home" right-icon="favorite">
-			button-web test blablabblablab
-		</button-web>
+    <menu-web
+      align="center"
+      position="bottom"
+      width="300"
+      max-height="1000"
+    >
+      <template id="trigger">
+        <button-web>Show menu</button-web>
+      </template>
 
-		<alert-web title="title" description="f" variant="info" button-label="buttonLabel">
-			<slot name="default">
-				alert-web
-			</slot>
-		</alert-web>
+      <template id='default="{ close }"'>
+        <menu-item-title-web>
+          First section title
+        </menu-item-title-web>
+        <menu-item-web>
+          <button-web variant="text">
+            Item
+          </button-web>
+        </menu-item-web>
+        <menu-item-web>
+          <button-web variant="text" left-icon="home">
+            Item with icon
+          </button-web>
+        </menu-item-web>
 
-		<h1 class="puik-h1">
-			puik h1
-		</h1>
-		<h2 class="puik-h2">
-			puik h2
-		</h2>
-		<h3 class="puik-h3">
-			puik h3
-		</h3>
+        <menu-item-separator-web></menu-item-separator-web>
 
-		<div class="puik-alert puik-alert--info" aria-live="polite">
-			<div class="puik-alert__content">
+        <menu-item-title-web>
+          Second section title
+        </menu-item-title-web>
+        <p>
+          Information text
+        </p>
+        <menu-item-web>
+          <button-web variant="destructive" left-icon="delete">
+            Destructive item
+          </button-web>
+        </menu-item-web>
+      </template>
+    </menu-web>
+
+
+    {#    <modal-web#}
+    {#      title="title"#}
+    {#      main-button-text="mainButtonText"#}
+    {#      second-button-text="secondButtonText"#}
+    {#      side-button-text="sideButtonText"#}
+    {#      size="small"#}
+    {#      is-open#}
+    {#      title-icon="home"#}
+    {#    >#}
+    {#      Your content#}
+    {#    </modal-web>#}
+
+    <pagination-web
+      model-value="4"
+      page="1"
+      total-item="500"
+      item-count="25"
+      items-per-page="20"
+    ></pagination-web>
+
+
+    <progress-bar-web percentage="30"></progress-bar-web>
+
+    <progress-stepper-web model-value="2">
+      <progress-stepper-step-web step="1">
+        <span slot="text1">Text step 1</span>
+        <span slot="additional-text1">Additional text step 1</span>
+      </progress-stepper-step-web>
+      <progress-stepper-step-web step="2">
+        <template id="text2">Text step 1</template>
+        <template id="additional-text2">Additional text step 1</template>
+      </progress-stepper-step-web>
+      <progress-stepper-step-web step="3">
+        <template id="text3">Text step 1</template>
+        <template id="additional-text3">Additional text step 1</template>
+      </progress-stepper-step-web>
+    </progress-stepper-web>
+
+
+    <radio-web
+      label="label"
+      name="name"
+      value="value"
+    ></radio-web>
+
+
+    <select-web>
+    </select-web>
+
+    <sidebar-web open-accordion="name">
+      <sidebar-item-web title="Home" icon="home"></sidebar-item-web>
+      <sidebar-item-web title="Dashboard" icon="trending_up"></sidebar-item-web>
+      <sidebar-title-web>Section title</sidebar-title-web>
+      <sidebar-group-item-web title="Orders" icon="shopping_basket" name="group-1" active>
+        <sidebar-item-web title="Title 1" active></sidebar-item-web>
+        <sidebar-item-web title="Title 2"></sidebar-item-web>
+        <sidebar-item-web title="Title 3"></sidebar-item-web>
+      </sidebar-group-item-web>
+      <sidebar-group-item-web title="Catalog" icon="store" name="group-2">
+        <sidebar-item-web title="Title 1"></sidebar-item-web>
+        <sidebar-item-web title="Title 2"></sidebar-item-web>
+        <sidebar-item-web title="Title 3"></sidebar-item-web>
+      </sidebar-group-item-web>
+      <sidebar-group-item-web title="Customers" icon="people" name="group-3">
+        <sidebar-item-web title="Title 1"></sidebar-item-web>
+        <sidebar-item-web title="Title 2"></sidebar-item-web>
+        <sidebar-item-web title="Title 3"></sidebar-item-web>
+      </sidebar-group-item-web>
+      <sidebar-item-web title="Settings" icon="settings"></sidebar-item-web>
+      <sidebar-item-web title="New modules added customization" icon="extension"></sidebar-item-web>
+    </sidebar-web>
+
+
+
+    <skeleton-loader-group-web>
+      <div style="border: 1px solid grey; width: 50%; padding: 10px">
+        <skeleton-loader-web variant="image"></skeleton-loader-web>
+        <skeleton-loader-web variant="h3"></skeleton-loader-web>
+        <skeleton-loader-web variant="jumbotron"></skeleton-loader-web>
+      </div>
+    </skeleton-loader-group-web>
+
+    <spinner-web size="lg" label="WAIT" position="right">
+    </spinner-web>
+
+    <switch-web label="toto" screen-reader-text="toooot">
+    </switch-web>
+
+    <tab-navigation-web name="tab.name" default-position="2">
+      <tab-navigation-group-titles-web aria-label="args.ariaLabel">
+        <tab-navigation-title-web position="1">
+          TAB1
+        </tab-navigation-title-web>
+        <tab-navigation-title-web position="2">
+          TAB2
+        </tab-navigation-title-web>
+      </tab-navigation-group-titles-web>
+
+      <tab-navigation-group-panels-web>
+        <tab-navigation-panel-web position="1">
+          CONTENT1
+        </tab-navigation-panel-web>
+        <tab-navigation-panel-web position="2">
+          CONTENT2
+        </tab-navigation-panel-web>
+      </tab-navigation-group-panels-web>
+    </tab-navigation-web>
+
+
+
+    <table-web
+      id="table-web"
+      :headers=""
+      :items="[]"
+    >
+    </table-web>
+
+    <tag-web
+      id="tag-web"
+      content="contentTAG"
+      variant="neutral"
+      icon="home"
+      data-test="GRO?GNGE"
+    >
+    </tag-web>
+    <tag-web
+      id="tag-web"
+      content="contentTAG"
+      variant="blue"
+      disabled
+    >
+    </tag-web>
+    <tag-web
+      id="tag-web"
+      content="contenefkrengkjerngjrnegknrkgnerhkgnekgetTAG"
+      variant="yellow"
+    >
+    </tag-web>
+    <tag-web
+      id="tag-web"
+      content="contentTAG"
+      variant="purple"
+    >
+    </tag-web>
+    <tag-web
+      id="tag-web"
+      content="contentTAG"
+      variant="green"
+    >
+    </tag-web>
+
+    <textarea-web
+      id="textarea-puik"
+      placeholder="test"
+      model-value="textarea-val"
+      auto-grow
+      max-rows="5"
+      max-length="5"
+    >
+    </textarea-web>
+
+    <tooltip-web
+      title="Tooltip"
+      description="desc"
+    >
+      test
+      <template id="title">
+        <p>My paragraph</p>
+      </template>
+    </tooltip-web>
+
+    <button-web size="sm" variant="primary" :fluid="false" :wrap-label="true" :disabled="false" left-icon="home" right-icon="favorite">
+      button-web test blablabblablab
+    </button-web>
+
+    <alert-web title="title" description="f" variant="info" button-label="buttonLabel">
+      <slot name="default">
+        alert-web
+      </slot>
+    </alert-web>
+
+    <h1 class="puik-h1">
+      puik h1
+    </h1>
+    <h2 class="puik-h2">
+      puik h2
+    </h2>
+    <h3 class="puik-h3">
+      puik h3
+    </h3>
+
+    <div class="puik-alert puik-alert--info" aria-live="polite">
+      <div class="puik-alert__content">
 				<span class="puik-icon puik-alert__icon">
 					info
 				</span>
-				<div class="puik-alert__text">
-					<p class="puik-alert__title">
-						Alert
-					</p>
-					<span class="puik-alert__description">
+        <div class="puik-alert__text">
+          <p class="puik-alert__title">
+            Alert
+          </p>
+          <span class="puik-alert__description">
 						info alert
 					</span>
-				</div>
-			</div>
-			<button class="puik-button puik-button--info puik-button--md puik-alert__button">
-				Button
-			</button>
-		</div>
+        </div>
+      </div>
+      <button class="puik-button puik-button--info puik-button--md puik-alert__button">
+        Button
+      </button>
+    </div>
 
-		<div class="puik-alert puik-alert--success" aria-live="polite">
-			<div class="puik-alert__content">
+    <div class="puik-alert puik-alert--success" aria-live="polite">
+      <div class="puik-alert__content">
 				<span class="puik-icon puik-alert__icon">
 					check_circle
 				</span>
-				<div class="puik-alert__text">
-					<p class="puik-alert__title">
-						Alert
-					</p>
-					<span class="puik-alert__description">
+        <div class="puik-alert__text">
+          <p class="puik-alert__title">
+            Alert
+          </p>
+          <span class="puik-alert__description">
 						success alert
 					</span>
-				</div>
-			</div>
-			<button class="puik-button puik-button--success puik-button--md puik-alert__button">
-				Button
-			</button>
-		</div>
+        </div>
+      </div>
+      <button class="puik-button puik-button--success puik-button--md puik-alert__button">
+        Button
+      </button>
+    </div>
 
-		<div class="puik-alert puik-alert--warning" aria-live="polite">
-			<div class="puik-alert__content">
+    <div class="puik-alert puik-alert--warning" aria-live="polite">
+      <div class="puik-alert__content">
 				<span class="puik-icon puik-alert__icon">
 					warning
 				</span>
-				<div class="puik-alert__text">
-					<p class="puik-alert__title">
-						Alert
-					</p>
-					<span class="puik-alert__description">
+        <div class="puik-alert__text">
+          <p class="puik-alert__title">
+            Alert
+          </p>
+          <span class="puik-alert__description">
 						warning alert
 					</span>
-				</div>
-			</div>
-			<button class="puik-button puik-button--warning puik-button--md puik-alert__button">
-				Button
-			</button>
-		</div>
+        </div>
+      </div>
+      <button class="puik-button puik-button--warning puik-button--md puik-alert__button">
+        Button
+      </button>
+    </div>
 
-		<div class="puik-alert puik-alert--danger" aria-live="polite">
-			<div class="puik-alert__content">
+    <div class="puik-alert puik-alert--danger" aria-live="polite">
+      <div class="puik-alert__content">
 				<span class="puik-icon puik-alert__icon">
 					error
 				</span>
-				<div class="puik-alert__text">
-					<p class="puik-alert__title">
-						Alert
-					</p>
-					<span class="puik-alert__description">
+        <div class="puik-alert__text">
+          <p class="puik-alert__title">
+            Alert
+          </p>
+          <span class="puik-alert__description">
 						danger alert
 					</span>
-				</div>
-			</div>
+        </div>
+      </div>
 
-			<button class="puik-button puik-button--danger puik-button--md puik-alert__button">
-				Button
-			</button>
-		</div>
+      <button class="puik-button puik-button--danger puik-button--md puik-alert__button">
+        Button
+      </button>
+    </div>
 
-		<div class="flex">
-			<div class="puik-badge puik-badge--success">
-				success badge
-			</div>
-			<div class="puik-badge puik-badge--warning">
-				warning badge
-			</div>
-			<div class="puik-badge puik-badge--danger">
-				danger badge
-			</div>
-			<div class="puik-badge puik-badge--info">
-				info badge
-			</div>
-			<div class="puik-badge puik-badge--neutral">
-				neutral badge
-			</div>
-		</div>
+    <div class="flex">
+      <div class="puik-badge puik-badge--success">
+        success badge
+      </div>
+      <div class="puik-badge puik-badge--warning">
+        warning badge
+      </div>
+      <div class="puik-badge puik-badge--danger">
+        danger badge
+      </div>
+      <div class="puik-badge puik-badge--info">
+        info badge
+      </div>
+      <div class="puik-badge puik-badge--neutral">
+        neutral badge
+      </div>
+    </div>
 
 
-		<div class="flex flex-col">
-			<label class="puik-label" for="input">
-				Label
-			</label>
-			<div class="puik-input">
-				<div class="puik-input__wrapper">
-					<input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
-				</div>
-			</div>
-		</div>
+    <div class="flex flex-col">
+      <label class="puik-label" for="input">
+        Label
+      </label>
+      <div class="puik-input">
+        <div class="puik-input__wrapper">
+          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
+        </div>
+      </div>
+    </div>
 
-		<div class="flex flex-col">
-			<label class="puik-label" for="input">
-				Label
-			</label>
-			<div class="puik-input">
-				<div class="puik-input__wrapper">
-					<input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
-				</div>
-			</div>
-		</div>
+    <div class="flex flex-col">
+      <label class="puik-label" for="input">
+        Label
+      </label>
+      <div class="puik-input">
+        <div class="puik-input__wrapper">
+          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
+        </div>
+      </div>
+    </div>
 
-		<div class="flex flex-col">
-			<label class="puik-label" for="input">
-				Label
-			</label>
-			<div class="puik-input">
-				<div class="puik-input__wrapper">
-					<input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
-				</div>
-			</div>
-		</div>
+    <div class="flex flex-col">
+      <label class="puik-label" for="input">
+        Label
+      </label>
+      <div class="puik-input">
+        <div class="puik-input__wrapper">
+          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
+        </div>
+      </div>
+    </div>
 
-		<div class="puik-tooltip" tabindex="0" aria-describedby="tooltip-id">
-			<div class="puik-tooltip__wrapper">
-				<div class="puik-icon material-icons-round" style="font-size: 1.25rem;">
-					help_outline
-				</div>
-			</div>
-			<div id="tooltip-id" class="puik-tooltip__tip" role="tooltip" style="z-index: 1000; position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(-589px, 146px); display: none;" data-popper-placement="left">
-				<div class="puik-tooltip__tip__content">
+    <div class="puik-tooltip" tabindex="0" aria-describedby="tooltip-id">
+      <div class="puik-tooltip__wrapper">
+        <div class="puik-icon material-icons-round" style="font-size: 1.25rem;">
+          help_outline
+        </div>
+      </div>
+      <div id="tooltip-id" class="puik-tooltip__tip" role="tooltip" style="z-index: 1000; position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(-589px, 146px); display: none;" data-popper-placement="left">
+        <div class="puik-tooltip__tip__content">
 					<span class="puik-tooltip__tip__content__title">
 						Title
 					</span>
-					<span class="puik-tooltip__tip__content__description">
+          <span class="puik-tooltip__tip__content__description">
 						This is a tooltip
 					</span>
-				</div>
-				<div class="puik-tooltip__tip__arrow" style="position: absolute; top: 0px; transform: translate(0px, 22px);"></div>
-			</div>
-		</div>
-	</div>
+        </div>
+        <div class="puik-tooltip__tip__arrow" style="position: absolute; top: 0px; transform: translate(0px, 22px);"></div>
+      </div>
+    </div>
+  </div>
 
 
-	{% block supplier_grid %}
-		{{ ps.infotip(settingsTipMessage, true) }}
-		{% include'@PrestaShop/Admin/Common/Grid/grid_panel.html.twig' with {'grid': supplierGrid} %}
-	{% endblock %}
+  {% block supplier_grid %}
+    {{ ps.infotip(settingsTipMessage, true) }}
+    {% include'@PrestaShop/Admin/Common/Grid/grid_panel.html.twig' with {'grid': supplierGrid} %}
+  {% endblock %}
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
+  {{ parent() }}
+  <script>
+    //TEXTAREA
+    const customInputs = document.querySelectorAll('textarea-web')
+    if (customInputs) {
+      customInputs.forEach((customInput) => {
+        customInput.addEventListener('update:modelValue', (value) => {
+          customInput.setAttribute('model-value', value.detail[0])
+        })
+      })
+    }
 
-	<script src="{{ asset('themes/new-theme/public/supplier.bundle.js') }}"></script>
-	<script src="{{ asset('themes/default/js/bundle/pagination.js') }}"></script>
+    // TABLE
+    const headers = [
+      {
+        text: 'Nom',
+        value: 'lastname',
+        size: 'md',
+        searchable: true,
+      },
+      {
+        text: 'Prénom',
+        value: 'firstname',
+        size: 'md',
+        searchable: true,
+      },
+      {
+        text: 'Age',
+        value: 'age',
+        size: 'sm',
+        align: 'right',
+        searchable: true,
+      },
+      {
+        text: 'Email',
+        value: 'email',
+        align: 'left',
+        searchable: true,
+      },
+      {
+        value: 'actions',
+        size: 'sm',
+        align: 'center',
+        preventExpand: true,
+        searchSubmit: true,
+      },
+    ];
+    const table = document.querySelectorAll('table-web')
+    table[0].setAttribute('headers', JSON.stringify(headers))
+
+    // // PROGRESS STEPPER
+    // let template = document.getElementById("text1");
+    // let templateContent = template.content;
+    // document.body.appendChild(templateContent);
+    //
+    // let template = document.getElementById("additional-text1");
+    // let templateContent = template.content;
+    // document.body.appendChild(templateContent);
+
+    //Pagination
+    const customInputs2 = document.querySelectorAll('pagination-web')
+    if (customInputs2) {
+      customInputs2.forEach((customInput) => {
+        customInput.addEventListener('update:page', (value) => {
+          customInput.setAttribute('model-value', value.detail[0])
+        })
+      })
+    }
+
+  </script>
+  <script src="{{ asset('themes/new-theme/public/supplier.bundle.js') }}"></script>
+  <script src="{{ asset('themes/default/js/bundle/pagination.js') }}"></script>
 {% endblock %}
