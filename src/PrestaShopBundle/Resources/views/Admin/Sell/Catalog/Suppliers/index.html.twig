@@ -38,17 +38,116 @@
 
 {% block content %}
 
+	<puik-card-web variant="default" class="mb-4">
+		<h3 class="puik-h3">
+			Card web title
+		</h3>
+		<div class="flex flex-col" style="gap: 20px;">
+			<puik-button-web class="mb-4" size="sm" variant="primary" :fluid="false" :wrap-label="true" :disabled="false" left-icon="home" right-icon="favorite" onclick="buttonEvent()">
+				button-web
+			</puik-button-web>
+			<div class="mb-2"></div>
+			<puik-alert-web title="alert web" description="f" variant="info" button-label="buttonLabel" is-closable>
+				<slot name="default">
+					alert-web
+				</slot>
+			</puik-alert-web>
+			<div class="mb-2"></div>
+			<puik-accordion-group-web v-model="expandedAccordion" contained>
+				<puik-accordion-web icon="home" title="Title 1" sub-title="subtitle 1" name="accordion-1" disabled data-test="test">
+					Content 1
+				</puik-accordion-web>
+				<puik-accordion-web title="Title 2" name="accordion-2">
+					Content 2
+				</puik-accordion-web>
+				<puik-accordion-web title="Title 3" name="accordion-3">
+					Content 3
+				</puik-accordion-web>
+			</puik-accordion-group-web>
+			<div class="mb-2"></div>
+			<puik-avatar-web id="avatar1" data-test="avatar-test" size="small" type="photo" mode="primary" src="https://picsum.photos/200/300" :alt="args.alt" firstname="args.firstname" lastname="args.lastname"/>
+			</puik-avatar-web>
+			<div class="mb-2"></div>
+			<puik-avatar-web id="avatar2" size="medium" type="icon" mode="primary" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
+			</puik-avatar-web>
+			<div class="mb-2"></div>
+			<puik-avatar-web id="avatar3" size="medium" type="icon" mode="reverse" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
+			</puik-avatar-web>
+			<div class="mb-2"></div>
+			<puik-avatar-web id="avatar4" size="large" type="initials" mode="primary" firstname="firstname" lastname="lastname"/>
+			</puik-avatar-web>
+			<div class="mb-2"></div>
+			<puik-avatar-web id="avatar5" size="large" type="initials" mode="reverse" firstname="args.firstname" lastname="args.lastname"/>
+			</puik-avatar-web>
+			<div class="mb-2"></div>
+			<puik-avatar-web id="avatar6" size="jumbo" type="icon" mode="primary" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
+			</puik-avatar-web>
+			<div class="mb-2"></div>
+			<div class="flex">
+				<puik-badge-web variant="success">
+					The text of the badge
+				</puik-badge-web>
+				<puik-badge-web variant="warning">
+					The text of the badge
+				</puik-badge-web>
+				<puik-badge-web variant="danger">
+					The text of the badge
+				</puik-badge-web>
+				<puik-badge-web variant="info">
+					The text of the badge
+				</puik-badge-web>
+				<puik-badge-web variant="neutral" data-test="badge-test">
+					The text of the badge
+				</puik-badge-web>
+			</div>
+			<div class="mb-2"></div>
+			  <puik-breadcrumb-web
+				items="breadcrumbItems"
+				icon="home"
+			></puik-breadcrumb-web>
+			<div class="mb-2"></div>
+			<puik-checkbox-web v-model="value" label="Label" data-test="check-test">
+				<slot>label</slot>
+			</puik-checkbox-web>
+			<div class="mb-2"></div>
+		</div>
+		<puik-chip-web
+			id="chip-id"
+			content="chipcontentgrrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrggrgr"
+			size="default"
+			icon="home"
+			tooltip-position="bottom"
+		></puik-chip-web>
+		<div class="mb-2"></div>
+		<puik-divider-web></puik-divider-web>
+		<puik-icon-web icon="check" font-size="140px" color="green" data-test="icon-test"></puik-icon-web>
+		<div>
+			<puik-label-web for="myInput" readonly data-test="lable-test">My Label</puik-label-web>
+			<puik-input-web id="myInput" name="myInput" v-model="myValue" type="text" required hint="hint" prepend="home" placeholder="placeholder" has-error data-test="input-test">
+				<slot name="hint">hint</slot>
+				<slot name="error">error</slot>
+			</puik-input-web>
+		</div>
+		<puik-link-web size="sm" href="#" target="_blank" title="I'm a tooltip for your link">
+			I'm a cool link
+		</puik-link-web>
+		<puik-link-web size="md" href="#" target="_self" title="I'm a tooltip for your link">
+			I'm a cool link
+		</puik-link-web>
+		<puik-link-web size="lg" href="#" target="_parent" title="I'm a tooltip for your link" data-test="link-test" high-contrast>
+			I'm a cool link
+		</puik-link-web>
+	</puik-card-web>
+
+	<div class="mb-2"></div>
+
+	<div style="min-height: 100px; background-color: white; padding: 20px; display: flex;">
+		<puik-divider-web orientation="vertical"></puik-divider-web>
+	</div>
+
+	<div class="mb-4"></div>
+
 	<div class="puik-card puik-card--default mb-4">
-
-		<button-web size="sm" variant="primary" :fluid="false" :wrap-label="true" :disabled="false" left-icon="home" right-icon="favorite">
-			button-web test blablabblablab
-		</button-web>
-
-		<alert-web title="title" description="f" variant="info" button-label="buttonLabel">
-			<slot name="default">
-				alert-web
-			</slot>
-		</alert-web>
 
 		<h1 class="puik-h1">
 			puik h1
@@ -221,4 +320,68 @@
 
 	<script src="{{ asset('themes/new-theme/public/supplier.bundle.js') }}"></script>
 	<script src="{{ asset('themes/default/js/bundle/pagination.js') }}"></script>
+
+	<script>
+		const buttonEvent = () => {
+			document.querySelector("puik-button-web").addEventListener("click", (event) => {
+			console.log("Button clicked!", event);
+			});
+		};
+
+		const alertClosableEvent = () => {
+			document.querySelector(".puik-icon .puik-alert__close").addEventListener("click", (event) => {
+			console.log("alert closable!", event);
+			});
+		};
+
+		const breadcrumbItems = [
+			{
+				label: "label 1",
+				href: "#",
+				target: '_blank',
+				dataTest: "item1-test",
+			},
+			{
+				label: "label 2",
+				href: "#",
+				target: '_self',
+				dataTest: "item2-test",
+			},
+			{
+				label: "label 3",
+				href: "#",
+				target: '_parent',
+				dataTest: "item3-test",
+			},
+			{
+				label: "label 3",
+				href: "#",
+				target: '_top',
+				dataTest: "item4-test",
+			}
+		]
+
+		handleCloseChip = () => {
+			console.log('close')
+		}
+
+		let myValue = ""
+		const inputWebs = document.querySelectorAll('puik-input-web')
+		if (inputWebs) {
+			console.log(inputWebs)
+			inputWebs.forEach((inputWeb) => {
+			inputWeb.addEventListener('update:modelValue', (value) => {
+				console.log(value)
+				inputWeb.setAttribute('model-value', value.detail[0])
+				// InputCeValue.value = inputWeb.getAttribute('model-value')
+			})
+			})
+		}
+
+		const myChip = document.querySelector('#chip-id')
+		myChip.addEventListener('close', (event)=>{
+			console.log(event)
+		})
+	</script>
+
 {% endblock %}

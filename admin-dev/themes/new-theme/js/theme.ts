@@ -26,7 +26,7 @@
 // Dependencies
 
 import {
-  initWeb, PuikAlertCe, PuikButtonCe,
+  initAllWeb,
 } from '@prestashopcorp/puik-web-components';
 import 'prestakit/dist/js/prestashop-ui-kit';
 import 'jquery-ui-dist/jquery-ui';
@@ -77,5 +77,6 @@ $(() => {
   watchSymfonyDebugBar();
 });
 
-initWeb('button-web', PuikButtonCe);
-initWeb('alert-web', PuikAlertCe);
+// initWeb('button-web', PuikButtonCe);
+// initWeb('alert-web', PuikAlertCe);
+initAllWeb('web');
