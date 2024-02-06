@@ -42,6 +42,172 @@
 %}
 
 {% block content %}
+
+  <div class="puik-card puik-card--default mb-4">
+
+    <h1 class="puik-h1">
+      Test CSS components
+    </h1>
+
+    <h1 class="puik-h1">
+      puik h1
+    </h1>
+    <h2 class="puik-h2">
+      puik h2
+    </h2>
+    <h3 class="puik-h3">
+      puik h3
+    </h3>
+
+    <div class="puik-alert puik-alert--info" aria-live="polite">
+      <div class="puik-alert__content">
+				<span class="puik-icon puik-alert__icon">
+					info
+				</span>
+        <div class="puik-alert__text">
+          <p class="puik-alert__title">
+            Alert
+          </p>
+          <span class="puik-alert__description">
+						info alert
+					</span>
+        </div>
+      </div>
+      <button class="puik-button puik-button--info puik-button--md puik-alert__button">
+        Button
+      </button>
+    </div>
+
+    <div class="puik-alert puik-alert--success" aria-live="polite">
+      <div class="puik-alert__content">
+				<span class="puik-icon puik-alert__icon">
+					check_circle
+				</span>
+        <div class="puik-alert__text">
+          <p class="puik-alert__title">
+            Alert
+          </p>
+          <span class="puik-alert__description">
+						success alert
+					</span>
+        </div>
+      </div>
+      <button class="puik-button puik-button--success puik-button--md puik-alert__button">
+        Button
+      </button>
+    </div>
+
+    <div class="puik-alert puik-alert--warning" aria-live="polite">
+      <div class="puik-alert__content">
+				<span class="puik-icon puik-alert__icon">
+					warning
+				</span>
+        <div class="puik-alert__text">
+          <p class="puik-alert__title">
+            Alert
+          </p>
+          <span class="puik-alert__description">
+						warning alert
+					</span>
+        </div>
+      </div>
+      <button class="puik-button puik-button--warning puik-button--md puik-alert__button">
+        Button
+      </button>
+    </div>
+
+    <div class="puik-alert puik-alert--danger" aria-live="polite">
+      <div class="puik-alert__content">
+				<span class="puik-icon puik-alert__icon">
+					error
+				</span>
+        <div class="puik-alert__text">
+          <p class="puik-alert__title">
+            Alert
+          </p>
+          <span class="puik-alert__description">
+						danger alert
+					</span>
+        </div>
+      </div>
+
+      <button class="puik-button puik-button--danger puik-button--md puik-alert__button">
+        Button
+      </button>
+    </div>
+
+    <div class="flex">
+      <div class="puik-badge puik-badge--success">
+        success badge
+      </div>
+      <div class="puik-badge puik-badge--warning">
+        warning badge
+      </div>
+      <div class="puik-badge puik-badge--danger">
+        danger badge
+      </div>
+      <div class="puik-badge puik-badge--info">
+        info badge
+      </div>
+      <div class="puik-badge puik-badge--neutral">
+        neutral badge
+      </div>
+    </div>
+
+
+    <div class="flex flex-col">
+      <label class="puik-label" for="input">
+        Label
+      </label>
+      <div class="puik-input">
+        <div class="puik-input__wrapper">
+          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="puik-label" for="input">
+        Label
+      </label>
+      <div class="puik-input">
+        <div class="puik-input__wrapper">
+          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="puik-label" for="input">
+        Label
+      </label>
+      <div class="puik-input">
+        <div class="puik-input__wrapper">
+          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
+        </div>
+      </div>
+    </div>
+
+    <div class="puik-tooltip" tabindex="0" aria-describedby="tooltip-id">
+      <div class="puik-tooltip__wrapper">
+        <div class="puik-icon material-icons-round" style="font-size: 1.25rem;">
+          help_outline
+        </div>
+      </div>
+      <div id="tooltip-id" class="puik-tooltip__tip" role="tooltip" style="z-index: 1000; position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(-589px, 146px); display: none;" data-popper-placement="left">
+        <div class="puik-tooltip__tip__content">
+					<span class="puik-tooltip__tip__content__title">
+						Title
+					</span>
+          <span class="puik-tooltip__tip__content__description">
+						This is a tooltip
+					</span>
+        </div>
+        <div class="puik-tooltip__tip__arrow" style="position: absolute; top: 0px; transform: translate(0px, 22px);"></div>
+      </div>
+    </div>
+  </div>
+
   {% block manufacturers_listing %}
     {{ ps.infotip(settingsTipMessage, true) }}
     {% include '@PrestaShop/Admin/Common/Grid/grid_panel.html.twig' with {'grid': manufacturerGrid} %}

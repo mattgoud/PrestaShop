@@ -38,13 +38,111 @@
 
 {% block content %}
 
-  <puik-card-web variant="default" class="mb-4">
-		<h3 class="puik-h3">
-			Card web title
-		</h3>
-		<div class="flex flex-col" style="gap: 20px;">
+  <puik-card-web variant="default">
+		<h1 class="puik-h1">
+			Tests web-components
+		</h1>
 
-    <menu-web
+    <puik-accordion-group-web v-model="expandedAccordion" contained>
+      <puik-accordion-web icon="home" title="Title 1" sub-title="subtitle 1" name="accordion-1" disabled data-test="test">
+        Content 1
+      </puik-accordion-web>
+      <puik-accordion-web title="Title 2" name="accordion-2">
+        Content 2
+      </puik-accordion-web>
+      <puik-accordion-web title="Title 3" name="accordion-3">
+        Content 3
+      </puik-accordion-web>
+    </puik-accordion-group-web>
+
+    <puik-alert-web title="alert web" description="f" variant="info" button-label="buttonLabel" is-closable>
+      <slot name="default">
+        alert-web
+      </slot>
+    </puik-alert-web>
+
+    <puik-avatar-web id="avatar1" data-test="avatar-test" size="small" type="photo" mode="primary" src="https://picsum.photos/200/300" :alt="args.alt" firstname="args.firstname" lastname="args.lastname"/>
+    </puik-avatar-web>
+
+    <puik-avatar-web id="avatar2" size="medium" type="icon" mode="primary" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
+    </puik-avatar-web>
+
+    <puik-avatar-web id="avatar3" size="medium" type="icon" mode="reverse" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
+    </puik-avatar-web>
+
+    <puik-avatar-web id="avatar4" size="large" type="initials" mode="primary" firstname="firstname" lastname="lastname"/>
+    </puik-avatar-web>
+
+    <puik-avatar-web id="avatar5" size="large" type="initials" mode="reverse" firstname="args.firstname" lastname="args.lastname"/>
+    </puik-avatar-web>
+
+    <puik-avatar-web id="avatar6" size="jumbo" type="icon" mode="primary" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
+    </puik-avatar-web>
+
+    <div class="flex">
+      <puik-badge-web variant="success">
+        The text of the badge
+      </puik-badge-web>
+      <puik-badge-web variant="warning">
+        The text of the badge
+      </puik-badge-web>
+      <puik-badge-web variant="danger">
+        The text of the badge
+      </puik-badge-web>
+      <puik-badge-web variant="info">
+        The text of the badge
+      </puik-badge-web>
+      <puik-badge-web variant="neutral" data-test="badge-test">
+        The text of the badge
+      </puik-badge-web>
+    </div>
+
+    <puik-breadcrumb-web
+      items="breadcrumbItems"
+      icon="home">
+    </puik-breadcrumb-web>
+
+    <puik-button-web class="mb-4" size="sm" variant="primary" fluid="false" wrap-label="true" disabled="false" left-icon="home" right-icon="favorite" onclick="buttonEvent()">
+      button-web
+    </puik-button-web>
+
+    <puik-checkbox-web v-model="value" label="Label" data-test="check-test">
+      <slot>label</slot>
+    </puik-checkbox-web>
+
+		<puik-chip-web
+			id="chip-id"
+			content="chipcontentgrrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrggrgr"
+			size="default"
+			icon="home"
+			tooltip-position="bottom">
+    </puik-chip-web>
+
+		<puik-divider-web></puik-divider-web>
+
+		<puik-icon-web icon="check" font-size="140px" color="green" data-test="icon-test"></puik-icon-web>
+
+		<div>
+			<puik-label-web for="myInput" readonly data-test="lable-test">My Label</puik-label-web>
+			<puik-input-web id="myInput" name="myInput" v-model="myValue" type="text" required hint="hint" prepend="home" placeholder="placeholder" has-error data-test="input-test">
+				<slot name="hint">hint</slot>
+				<slot name="error">error</slot>
+			</puik-input-web>
+		</div>
+
+		<puik-link-web size="sm" href="#" target="_blank" title="I'm a tooltip for your link">
+			I'm a cool link
+		</puik-link-web>
+
+		<puik-link-web size="md" href="#" target="_self" title="I'm a tooltip for your link">
+			I'm a cool link
+		</puik-link-web>
+
+		<puik-link-web size="lg" href="#" target="_parent" title="I'm a tooltip for your link" data-test="link-test" high-contrast>
+			I'm a cool link
+		</puik-link-web>
+
+    {# <puik-menu-web
       align="center"
       position="bottom"
       width="300"
@@ -55,189 +153,191 @@
       </template>
 
       <template id='default="{ close }"'>
-        <menu-item-title-web>
+        <puik-menu-item-title-web>
           First section title
-        </menu-item-title-web>
-        <menu-item-web>
+        </puik-menu-item-title-web>
+        <puik-menu-item-web>
           <button-web variant="text">
             Item
           </button-web>
-        </menu-item-web>
-        <menu-item-web>
+        </puik-menu-item-web>
+        <puik-menu-item-web>
           <button-web variant="text" left-icon="home">
             Item with icon
           </button-web>
-        </menu-item-web>
+        </puik-menu-item-web>
 
-        <menu-item-separator-web></menu-item-separator-web>
+        <puik-menu-item-separator-web></puik-menu-item-separator-web>
 
-        <menu-item-title-web>
+        <puik-menu-item-title-web>
           Second section title
-        </menu-item-title-web>
+        </puik-menu-item-title-web>
         <p>
           Information text
         </p>
-        <menu-item-web>
+        <puik-menu-item-web>
           <button-web variant="destructive" left-icon="delete">
             Destructive item
           </button-web>
-        </menu-item-web>
+        </puik-menu-item-web>
       </template>
-    </menu-web>
+    </puik-menu-web> #}
 
+    {# <modal-web
+      title="title"
+      main-button-text="mainButtonText"
+      second-button-text="secondButtonText"
+      side-button-text="sideButtonText"
+      size="small"
+      is-open
+      title-icon="home"
+    >
+      Your content
+    </modal-web> #}
 
-    {#    <modal-web#}
-    {#      title="title"#}
-    {#      main-button-text="mainButtonText"#}
-    {#      second-button-text="secondButtonText"#}
-    {#      side-button-text="sideButtonText"#}
-    {#      size="small"#}
-    {#      is-open#}
-    {#      title-icon="home"#}
-    {#    >#}
-    {#      Your content#}
-    {#    </modal-web>#}
-
-    <pagination-web
+    <puik-pagination-web
       model-value="4"
       page="1"
       total-item="500"
       item-count="25"
       items-per-page="20"
-    ></pagination-web>
+    ></puik-pagination-web>
 
+    <puik-progress-bar-web percentage="30"></puik-progress-bar-web>
 
-    <progress-bar-web percentage="30"></progress-bar-web>
+    <puik-progress-stepper-web model-value="1">
+      <puik-progress-stepper-step-web step="1">
+        <div slot="text">Text step 1</div>
+        <div slot="additional-text">Additional text step 1</div>
+      </puik-progress-stepper-step-web>
+      <puik-progress-stepper-step-web step="2">
+        <div slot="text">Text step 1</div>
+        <div slot="additional-text">Additional text step 1</div>
+      </puik-progress-stepper-step-web>
+      <puik-progress-stepper-step-web step="3">
+        <div slot="text">Text step 1</div>
+        <div slot="additional-text">Additional text step 1</div>
+      </puik-progress-stepper-step-web>
+    </puik-progress-stepper-web>
 
-    <progress-stepper-web model-value="2">
-      <progress-stepper-step-web step="1">
-        <span slot="text1">Text step 1</span>
-        <span slot="additional-text1">Additional text step 1</span>
-      </progress-stepper-step-web>
-      <progress-stepper-step-web step="2">
-        <template id="text2">Text step 1</template>
-        <template id="additional-text2">Additional text step 1</template>
-      </progress-stepper-step-web>
-      <progress-stepper-step-web step="3">
-        <template id="text3">Text step 1</template>
-        <template id="additional-text3">Additional text step 1</template>
-      </progress-stepper-step-web>
-    </progress-stepper-web>
+    <div class="flex">
+        <puik-button-web id="previous-step-btn" size="sm" variant="primary" left-icon="chevron_left">
+          previous
+        </puik-button-web>
+        <puik-button-web id="next-step-btn" size="sm" variant="primary" right-icon="chevron_right">
+          next
+        </puik-button-web>
+    </div>
 
-
-    <radio-web
+    <puik-radio-web
       label="label"
       name="name"
       value="value"
-    ></radio-web>
+    ></puik-radio-web>
 
+    <puik-select-web>
+    </puik-select-web>
 
-    <select-web>
-    </select-web>
+    {# <puik-sidebar-web open-accordion="name">
+      <puik-sidebar-item-web title="Home" icon="home"></puik-sidebar-item-web>
+      <puik-sidebar-item-web title="Dashboard" icon="trending_up"></puik-sidebar-item-web>
+      <puik-sidebar-title-web>Section title</puik-sidebar-title-web>
+      <puik-sidebar-group-item-web title="Orders" icon="shopping_basket" name="group-1" active>
+        <puik-sidebar-item-web title="Title 1" active></puik-sidebar-item-web>
+        <puik-sidebar-item-web title="Title 2"></puik-sidebar-item-web>
+        <puik-sidebar-item-web title="Title 3"></puik-sidebar-item-web>
+      </puik-sidebar-group-item-web>
+      <puik-sidebar-group-item-web title="Catalog" icon="store" name="group-2">
+        <puik-sidebar-item-web title="Title 1"></puik-sidebar-item-web>
+        <puik-sidebar-item-web title="Title 2"></puik-sidebar-item-web>
+        <puik-sidebar-item-web title="Title 3"></puik-sidebar-item-web>
+      </puik-sidebar-group-item-web>
+      <puik-sidebar-group-item-web title="Customers" icon="people" name="group-3">
+        <puik-sidebar-item-web title="Title 1"></puik-sidebar-item-web>
+        <puik-sidebar-item-web title="Title 2"></puik-sidebar-item-web>
+        <puik-sidebar-item-web title="Title 3"></puik-sidebar-item-web>
+      </puik-sidebar-group-item-web>
+      <puik-sidebar-item-web title="Settings" icon="settings"></puik-sidebar-item-web>
+      <puik-sidebar-item-web title="New modules added customization" icon="extension"></puik-sidebar-item-web>
+    </puik-sidebar-web> #}
 
-    <sidebar-web open-accordion="name">
-      <sidebar-item-web title="Home" icon="home"></sidebar-item-web>
-      <sidebar-item-web title="Dashboard" icon="trending_up"></sidebar-item-web>
-      <sidebar-title-web>Section title</sidebar-title-web>
-      <sidebar-group-item-web title="Orders" icon="shopping_basket" name="group-1" active>
-        <sidebar-item-web title="Title 1" active></sidebar-item-web>
-        <sidebar-item-web title="Title 2"></sidebar-item-web>
-        <sidebar-item-web title="Title 3"></sidebar-item-web>
-      </sidebar-group-item-web>
-      <sidebar-group-item-web title="Catalog" icon="store" name="group-2">
-        <sidebar-item-web title="Title 1"></sidebar-item-web>
-        <sidebar-item-web title="Title 2"></sidebar-item-web>
-        <sidebar-item-web title="Title 3"></sidebar-item-web>
-      </sidebar-group-item-web>
-      <sidebar-group-item-web title="Customers" icon="people" name="group-3">
-        <sidebar-item-web title="Title 1"></sidebar-item-web>
-        <sidebar-item-web title="Title 2"></sidebar-item-web>
-        <sidebar-item-web title="Title 3"></sidebar-item-web>
-      </sidebar-group-item-web>
-      <sidebar-item-web title="Settings" icon="settings"></sidebar-item-web>
-      <sidebar-item-web title="New modules added customization" icon="extension"></sidebar-item-web>
-    </sidebar-web>
-
-
-
-    <skeleton-loader-group-web>
+    <puik-skeleton-loader-group-web>
       <div style="border: 1px solid grey; width: 50%; padding: 10px">
-        <skeleton-loader-web variant="image"></skeleton-loader-web>
-        <skeleton-loader-web variant="h3"></skeleton-loader-web>
-        <skeleton-loader-web variant="jumbotron"></skeleton-loader-web>
+        <puik-skeleton-loader-web variant="image"></puik-skeleton-loader-web>
+        <puik-skeleton-loader-web variant="h3"></puik-skeleton-loader-web>
+        <puik-skeleton-loader-web variant="jumbotron"></puik-skeleton-loader-web>
       </div>
-    </skeleton-loader-group-web>
+    </puik-skeleton-loader-group-web>
 
-    <spinner-web size="lg" label="WAIT" position="right">
-    </spinner-web>
+    <puik-spinner-web size="lg" label="WAIT" position="right">
+    </puik-spinner-web>
 
-    <switch-web label="toto" screen-reader-text="toooot">
-    </switch-web>
+    <puik-switch-web label="toto" screen-reader-text="toooot">
+      toto
+    </puik-switch-web>
 
-    <tab-navigation-web name="tab.name" default-position="2">
-      <tab-navigation-group-titles-web aria-label="args.ariaLabel">
-        <tab-navigation-title-web position="1">
+    <puik-tab-navigation-web name="tab.name" default-position="2">
+      <puik-tab-navigation-group-titles-web aria-label="args.ariaLabel">
+        <puik-tab-navigation-title-web position="1">
           TAB1
-        </tab-navigation-title-web>
-        <tab-navigation-title-web position="2">
+        </puik-tab-navigation-title-web>
+        <puik-tab-navigation-title-web position="2">
           TAB2
-        </tab-navigation-title-web>
-      </tab-navigation-group-titles-web>
+        </puik-tab-navigation-title-web>
+      </puik-tab-navigation-group-titles-web>
 
-      <tab-navigation-group-panels-web>
-        <tab-navigation-panel-web position="1">
+      <puik-tab-navigation-group-panels-web>
+        <puik-tab-navigation-panel-web position="1">
           CONTENT1
-        </tab-navigation-panel-web>
-        <tab-navigation-panel-web position="2">
+        </puik-tab-navigation-panel-web>
+        <puik-tab-navigation-panel-web position="2">
           CONTENT2
-        </tab-navigation-panel-web>
-      </tab-navigation-group-panels-web>
-    </tab-navigation-web>
+        </puik-tab-navigation-panel-web>
+      </puik-tab-navigation-group-panels-web>
+    </puik-tab-navigation-web>
 
-
-
-    <table-web
+    <puik-table-web
       id="table-web"
       :headers=""
       :items="[]"
     >
-    </table-web>
+    </puik-table-web>
 
-    <tag-web
-      id="tag-web"
+    <puik-tag-web
+      id="puik-tag-web"
       content="contentTAG"
       variant="neutral"
       icon="home"
       data-test="GRO?GNGE"
     >
-    </tag-web>
-    <tag-web
-      id="tag-web"
+    </puik-tag-web>
+    <puik-tag-web
+      id="puik-tag-web"
       content="contentTAG"
       variant="blue"
       disabled
     >
-    </tag-web>
-    <tag-web
-      id="tag-web"
+    </puik-tag-web>
+    <puik-tag-web
+      id="puik-tag-web"
       content="contenefkrengkjerngjrnegknrkgnerhkgnekgetTAG"
       variant="yellow"
     >
-    </tag-web>
-    <tag-web
-      id="tag-web"
+    </puik-tag-web>
+    <puik-tag-web
+      id="puik-tag-web"
       content="contentTAG"
       variant="purple"
     >
-    </tag-web>
-    <tag-web
-      id="tag-web"
+    </puik-tag-web>
+    <puik-tag-web
+      id="puik-tag-web"
       content="contentTAG"
       variant="green"
     >
-    </tag-web>
+    </puik-tag-web>
 
-    <textarea-web
+    <puik-textarea-web
       id="textarea-puik"
       placeholder="test"
       model-value="textarea-val"
@@ -245,9 +345,9 @@
       max-rows="5"
       max-length="5"
     >
-    </textarea-web>
+    </puik-textarea-web>
 
-    <tooltip-web
+    <puik-tooltip-web
       title="Tooltip"
       description="desc"
     >
@@ -255,272 +355,13 @@
       <template id="title">
         <p>My paragraph</p>
       </template>
-    </tooltip-web>
-	    <puik-button-web class="mb-4" size="sm" variant="primary" :fluid="false" :wrap-label="true" :disabled="false" left-icon="home" right-icon="favorite" onclick="buttonEvent()">
-	      button-web
-	    </puik-button-web>
-			<div class="mb-2"></div>
-	    <puik-alert-web title="alert web" description="f" variant="info" button-label="buttonLabel" is-closable>
-	      <slot name="default">
-	        alert-web
-	      </slot>
-	    </puik-alert-web>
-			<div class="mb-2"></div>
-			<puik-accordion-group-web v-model="expandedAccordion" contained>
-				<puik-accordion-web icon="home" title="Title 1" sub-title="subtitle 1" name="accordion-1" disabled data-test="test">
-					Content 1
-				</puik-accordion-web>
-				<puik-accordion-web title="Title 2" name="accordion-2">
-					Content 2
-				</puik-accordion-web>
-				<puik-accordion-web title="Title 3" name="accordion-3">
-					Content 3
-				</puik-accordion-web>
-			</puik-accordion-group-web>
-			<div class="mb-2"></div>
-			<puik-avatar-web id="avatar1" data-test="avatar-test" size="small" type="photo" mode="primary" src="https://picsum.photos/200/300" :alt="args.alt" firstname="args.firstname" lastname="args.lastname"/>
-			</puik-avatar-web>
-			<div class="mb-2"></div>
-			<puik-avatar-web id="avatar2" size="medium" type="icon" mode="primary" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
-			</puik-avatar-web>
-			<div class="mb-2"></div>
-			<puik-avatar-web id="avatar3" size="medium" type="icon" mode="reverse" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
-			</puik-avatar-web>
-			<div class="mb-2"></div>
-			<puik-avatar-web id="avatar4" size="large" type="initials" mode="primary" firstname="firstname" lastname="lastname"/>
-			</puik-avatar-web>
-			<div class="mb-2"></div>
-			<puik-avatar-web id="avatar5" size="large" type="initials" mode="reverse" firstname="args.firstname" lastname="args.lastname"/>
-			</puik-avatar-web>
-			<div class="mb-2"></div>
-			<puik-avatar-web id="avatar6" size="jumbo" type="icon" mode="primary" icon="favorite" firstname="args.firstname" lastname="args.lastname"/>
-			</puik-avatar-web>
-			<div class="mb-2"></div>
-			<div class="flex">
-				<puik-badge-web variant="success">
-					The text of the badge
-				</puik-badge-web>
-				<puik-badge-web variant="warning">
-					The text of the badge
-				</puik-badge-web>
-				<puik-badge-web variant="danger">
-					The text of the badge
-				</puik-badge-web>
-				<puik-badge-web variant="info">
-					The text of the badge
-				</puik-badge-web>
-				<puik-badge-web variant="neutral" data-test="badge-test">
-					The text of the badge
-				</puik-badge-web>
-			</div>
-			<div class="mb-2"></div>
-			  <puik-breadcrumb-web
-				items="breadcrumbItems"
-				icon="home"
-			></puik-breadcrumb-web>
-			<div class="mb-2"></div>
-			<puik-checkbox-web v-model="value" label="Label" data-test="check-test">
-				<slot>label</slot>
-			</puik-checkbox-web>
-			<div class="mb-2"></div>
-		</div>
-		<puik-chip-web
-			id="chip-id"
-			content="chipcontentgrrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrgrggrgr"
-			size="default"
-			icon="home"
-			tooltip-position="bottom"
-		></puik-chip-web>
-		<div class="mb-2"></div>
-		<puik-divider-web></puik-divider-web>
-		<puik-icon-web icon="check" font-size="140px" color="green" data-test="icon-test"></puik-icon-web>
-		<div>
-			<puik-label-web for="myInput" readonly data-test="lable-test">My Label</puik-label-web>
-			<puik-input-web id="myInput" name="myInput" v-model="myValue" type="text" required hint="hint" prepend="home" placeholder="placeholder" has-error data-test="input-test">
-				<slot name="hint">hint</slot>
-				<slot name="error">error</slot>
-			</puik-input-web>
-		</div>
-		<puik-link-web size="sm" href="#" target="_blank" title="I'm a tooltip for your link">
-			I'm a cool link
-		</puik-link-web>
-		<puik-link-web size="md" href="#" target="_self" title="I'm a tooltip for your link">
-			I'm a cool link
-		</puik-link-web>
-		<puik-link-web size="lg" href="#" target="_parent" title="I'm a tooltip for your link" data-test="link-test" high-contrast>
-			I'm a cool link
-		</puik-link-web>
-	</puik-card-web>
+    </puik-tooltip-web>
 
-	<div class="mb-2"></div>
+	</puik-card-web>
 
 	<div style="min-height: 100px; background-color: white; padding: 20px; display: flex;">
 		<puik-divider-web orientation="vertical"></puik-divider-web>
 	</div>
-
-	<div class="mb-4"></div>
-
-	<div class="puik-card puik-card--default mb-4">
-
-    <h1 class="puik-h1">
-      puik h1
-    </h1>
-    <h2 class="puik-h2">
-      puik h2
-    </h2>
-    <h3 class="puik-h3">
-      puik h3
-    </h3>
-
-    <div class="puik-alert puik-alert--info" aria-live="polite">
-      <div class="puik-alert__content">
-				<span class="puik-icon puik-alert__icon">
-					info
-				</span>
-        <div class="puik-alert__text">
-          <p class="puik-alert__title">
-            Alert
-          </p>
-          <span class="puik-alert__description">
-						info alert
-					</span>
-        </div>
-      </div>
-      <button class="puik-button puik-button--info puik-button--md puik-alert__button">
-        Button
-      </button>
-    </div>
-
-    <div class="puik-alert puik-alert--success" aria-live="polite">
-      <div class="puik-alert__content">
-				<span class="puik-icon puik-alert__icon">
-					check_circle
-				</span>
-        <div class="puik-alert__text">
-          <p class="puik-alert__title">
-            Alert
-          </p>
-          <span class="puik-alert__description">
-						success alert
-					</span>
-        </div>
-      </div>
-      <button class="puik-button puik-button--success puik-button--md puik-alert__button">
-        Button
-      </button>
-    </div>
-
-    <div class="puik-alert puik-alert--warning" aria-live="polite">
-      <div class="puik-alert__content">
-				<span class="puik-icon puik-alert__icon">
-					warning
-				</span>
-        <div class="puik-alert__text">
-          <p class="puik-alert__title">
-            Alert
-          </p>
-          <span class="puik-alert__description">
-						warning alert
-					</span>
-        </div>
-      </div>
-      <button class="puik-button puik-button--warning puik-button--md puik-alert__button">
-        Button
-      </button>
-    </div>
-
-    <div class="puik-alert puik-alert--danger" aria-live="polite">
-      <div class="puik-alert__content">
-				<span class="puik-icon puik-alert__icon">
-					error
-				</span>
-        <div class="puik-alert__text">
-          <p class="puik-alert__title">
-            Alert
-          </p>
-          <span class="puik-alert__description">
-						danger alert
-					</span>
-        </div>
-      </div>
-
-      <button class="puik-button puik-button--danger puik-button--md puik-alert__button">
-        Button
-      </button>
-    </div>
-
-    <div class="flex">
-      <div class="puik-badge puik-badge--success">
-        success badge
-      </div>
-      <div class="puik-badge puik-badge--warning">
-        warning badge
-      </div>
-      <div class="puik-badge puik-badge--danger">
-        danger badge
-      </div>
-      <div class="puik-badge puik-badge--info">
-        info badge
-      </div>
-      <div class="puik-badge puik-badge--neutral">
-        neutral badge
-      </div>
-    </div>
-
-
-    <div class="flex flex-col">
-      <label class="puik-label" for="input">
-        Label
-      </label>
-      <div class="puik-input">
-        <div class="puik-input__wrapper">
-          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-col">
-      <label class="puik-label" for="input">
-        Label
-      </label>
-      <div class="puik-input">
-        <div class="puik-input__wrapper">
-          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-col">
-      <label class="puik-label" for="input">
-        Label
-      </label>
-      <div class="puik-input">
-        <div class="puik-input__wrapper">
-          <input id="" class="puik-input__field" placeholder="input text" type="text" autocomplete="" name="">
-        </div>
-      </div>
-    </div>
-
-    <div class="puik-tooltip" tabindex="0" aria-describedby="tooltip-id">
-      <div class="puik-tooltip__wrapper">
-        <div class="puik-icon material-icons-round" style="font-size: 1.25rem;">
-          help_outline
-        </div>
-      </div>
-      <div id="tooltip-id" class="puik-tooltip__tip" role="tooltip" style="z-index: 1000; position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(-589px, 146px); display: none;" data-popper-placement="left">
-        <div class="puik-tooltip__tip__content">
-					<span class="puik-tooltip__tip__content__title">
-						Title
-					</span>
-          <span class="puik-tooltip__tip__content__description">
-						This is a tooltip
-					</span>
-        </div>
-        <div class="puik-tooltip__tip__arrow" style="position: absolute; top: 0px; transform: translate(0px, 22px);"></div>
-      </div>
-    </div>
-  </div>
-
 
   {% block supplier_grid %}
     {{ ps.infotip(settingsTipMessage, true) }}
@@ -531,8 +372,68 @@
 {% block javascripts %}
   {{ parent() }}
   <script>
-    //TEXTAREA
-    const customInputs = document.querySelectorAll('textarea-web')
+  
+    // Alert
+		const alertClosableEvent = () => {
+			document.querySelector(".puik-icon .puik-alert__close").addEventListener("click", (event) => {
+			console.log("alert closable!", event);
+			});
+		};
+
+    // Breadcrumb
+    const breadcrumb = document.querySelector('puik-breadcrumb-web')
+		const breadcrumbItems = [
+			{
+				label: "label 1",
+				href: "#",
+				target: '_blank',
+				dataTest: "item1-test",
+			},
+			{
+				label: "label 2",
+				href: "#",
+				target: '_self',
+				dataTest: "item2-test",
+			},
+			{
+				label: "label 3",
+				href: "#",
+				target: '_parent',
+				dataTest: "item3-test",
+			},
+			{
+				label: "label 3",
+				href: "#",
+				target: '_top',
+				dataTest: "item4-test",
+			}
+		]
+    // breadcrumb.setAttribute('items', JSON.stringify(breadcrumbItems))
+
+    // Chip
+		handleCloseChip = () => {
+			console.log('close')
+		}
+    const myChip = document.querySelector('#chip-id')
+    myChip.addEventListener('close', (event)=>{
+      console.log(event)
+    })
+
+    // Input
+		let myValue = ""
+		const inputWebs = document.querySelectorAll('puik-input-web')
+		if (inputWebs) {
+			console.log(inputWebs)
+			inputWebs.forEach((inputWeb) => {
+        inputWeb.addEventListener('update:modelValue', (value) => {
+          console.log(value)
+          inputWeb.setAttribute('model-value', value.detail[0])
+        })
+			})
+		}
+
+    // Textarea
+    const customInputs = document.querySelectorAll('puik-textarea-web')
     if (customInputs) {
       customInputs.forEach((customInput) => {
         customInput.addEventListener('update:modelValue', (value) => {
@@ -541,7 +442,7 @@
       })
     }
 
-    // TABLE
+    // Table
     const headers = [
       {
         text: 'Nom',
@@ -576,19 +477,10 @@
         searchSubmit: true,
       },
     ];
-    const table = document.querySelectorAll('table-web')
-    table[0].setAttribute('headers', JSON.stringify(headers))
+    // const table = document.querySelectorAll('table-web')
+    // table[0].setAttribute('headers', JSON.stringify(headers))
 
-    // // PROGRESS STEPPER
-    // let template = document.getElementById("text1");
-    // let templateContent = template.content;
-    // document.body.appendChild(templateContent);
-    //
-    // let template = document.getElementById("additional-text1");
-    // let templateContent = template.content;
-    // document.body.appendChild(templateContent);
-
-    //Pagination
+    // Pagination
     const customInputs2 = document.querySelectorAll('pagination-web')
     if (customInputs2) {
       customInputs2.forEach((customInput) => {
@@ -598,71 +490,22 @@
       })
     }
 
+    // Progress-stepper
+    let step = 1
+    const progress_stepper = document.querySelector('puik-progress-stepper-web')
+    const progress_stepper_steps = document.querySelectorAll('puik-progress-stepper-step-web')
+    if(progress_stepper) {
+      document.querySelector("#previous-step-btn").addEventListener("click", (event) => {
+        step === 1 ? step = 1 : step -= 1
+        progress_stepper.setAttribute('model-value', step)
+      });
+      document.querySelector("#next-step-btn").addEventListener("click", (event) => {
+        step === progress_stepper_steps.length ? step = progress_stepper_steps.length : step += 1
+        progress_stepper.setAttribute('model-value', step)
+      });
+    }
+
   </script>
   <script src="{{ asset('themes/new-theme/public/supplier.bundle.js') }}"></script>
   <script src="{{ asset('themes/default/js/bundle/pagination.js') }}"></script>
-
-	<script>
-		const buttonEvent = () => {
-			document.querySelector("puik-button-web").addEventListener("click", (event) => {
-			console.log("Button clicked!", event);
-			});
-		};
-
-		const alertClosableEvent = () => {
-			document.querySelector(".puik-icon .puik-alert__close").addEventListener("click", (event) => {
-			console.log("alert closable!", event);
-			});
-		};
-
-		const breadcrumbItems = [
-			{
-				label: "label 1",
-				href: "#",
-				target: '_blank',
-				dataTest: "item1-test",
-			},
-			{
-				label: "label 2",
-				href: "#",
-				target: '_self',
-				dataTest: "item2-test",
-			},
-			{
-				label: "label 3",
-				href: "#",
-				target: '_parent',
-				dataTest: "item3-test",
-			},
-			{
-				label: "label 3",
-				href: "#",
-				target: '_top',
-				dataTest: "item4-test",
-			}
-		]
-
-		handleCloseChip = () => {
-			console.log('close')
-		}
-
-		let myValue = ""
-		const inputWebs = document.querySelectorAll('puik-input-web')
-		if (inputWebs) {
-			console.log(inputWebs)
-			inputWebs.forEach((inputWeb) => {
-			inputWeb.addEventListener('update:modelValue', (value) => {
-				console.log(value)
-				inputWeb.setAttribute('model-value', value.detail[0])
-				// InputCeValue.value = inputWeb.getAttribute('model-value')
-			})
-			})
-		}
-
-		const myChip = document.querySelector('#chip-id')
-		myChip.addEventListener('close', (event)=>{
-			console.log(event)
-		})
-	</script>
-
 {% endblock %}

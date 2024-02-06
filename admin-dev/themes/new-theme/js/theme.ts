@@ -77,6 +77,4 @@ $(() => {
   watchSymfonyDebugBar();
 });
 
-// initWeb('button-web', PuikButtonCe);
-// initWeb('alert-web', PuikAlertCe);
 initAllWeb('web');
