@@ -98,11 +98,10 @@
     </div>
 
     <puik-breadcrumb-web
-      items="breadcrumbItems"
       icon="home">
     </puik-breadcrumb-web>
 
-    <puik-button-web class="mb-4" size="sm" variant="primary" fluid="false" wrap-label="true" disabled="false" left-icon="home" right-icon="favorite" onclick="buttonEvent()">
+    <puik-button-web class="mb-4" size="sm" variant="primary" wrap-label left-icon="home" right-icon="favorite" onclick="buttonEvent()">
       button-web
     </puik-button-web>
 
@@ -384,7 +383,7 @@
     const breadcrumb = document.querySelector('puik-breadcrumb-web')
 		const breadcrumbItems = [
 			{
-				label: "label 1",
+				label: "test ok 1",
 				href: "#",
 				target: '_blank',
 				dataTest: "item1-test",
@@ -408,7 +407,8 @@
 				dataTest: "item4-test",
 			}
 		]
-    // breadcrumb.setAttribute('items', JSON.stringify(breadcrumbItems))
+
+    breadcrumb.setAttribute('items-json', JSON.stringify(breadcrumbItems))
 
     // Chip
 		handleCloseChip = () => {
