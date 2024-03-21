@@ -373,11 +373,11 @@
   <script>
   
     // Alert
-		const alertClosableEvent = () => {
-			document.querySelector(".puik-icon .puik-alert__close").addEventListener("click", (event) => {
-			console.log("alert closable!", event);
-			});
-		};
+    const alertWeb = document.querySelector('puik-alert-web');
+    alertWeb.addEventListener('close', function(e) {
+      console.log(e.detail);
+      alertWeb.style.display = 'none'
+    });
 
     // Breadcrumb
     const breadcrumb = document.querySelector('puik-breadcrumb-web')
@@ -423,7 +423,6 @@
 		let myValue = ""
 		const inputWebs = document.querySelectorAll('puik-input-web')
 		if (inputWebs) {
-			console.log(inputWebs)
 			inputWebs.forEach((inputWeb) => {
         inputWeb.addEventListener('update:modelValue', (value) => {
           console.log(value)
