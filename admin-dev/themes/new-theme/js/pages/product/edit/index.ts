@@ -51,6 +51,9 @@ import ProductShippingManager from '@pages/product/edit/manager/product-shipping
 import ProductDetailsManager from '@pages/product/edit/manager/product-details-manager';
 import SummaryQuantityUpdater from '@pages/product/edit/summary-quantity-updater';
 import initCarrierSelector from '@pages/product/carrier';
+import './test-vue';
+
+console.log('test vue');
 
 const {$} = window;
 

@@ -34,6 +34,16 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FontPreloadPlugin = require('webpack-font-preload-plugin');
 const CssoWebpackPlugin = require('csso-webpack-plugin').default;
+// const UnpluginVueComponents = require('unplugin-vue-components/webpack').default;
+// const UnpluginAutoImport = require('unplugin-auto-import/webpack').default;
+// const UnpluginVueComponents = require('unplugin-vue-components/webpack');
+// const UnpluginAutoImport = require('unplugin-auto-import/webpack');
+// const { PuikResolveroptions } = require ('@prestashopcorp/puik-resolver');
+// const Components = require('unplugin-vue-components/webpack').default;
+// const AutoImport = require('unplugin-auto-import/webpack').default;
+const { PuikResolver } = require('@prestashopcorp/puik-resolver');
+const tailwindcss = require('tailwindcss');
+const autoprefixer = require('autoprefixer');
 
 module.exports = {
   externals: {
@@ -189,6 +199,8 @@ module.exports = {
       '@PSVue': path.resolve(__dirname, '../js/vue'),
       '@PSTypes': path.resolve(__dirname, '../js/types'),
       '@images': path.resolve(__dirname, '../img'),
+      '@prestashopcorp/puik-theme/assets': path.resolve(__dirname, '../node_modules/@prestashopcorp/puik-theme/assets'),
+      '@prestashopcorp/puik-theme': path.resolve(__dirname, '../node_modules/@prestashopcorp/puik-theme/dist'),
     },
   },
   module: {
@@ -364,6 +376,9 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               sourceMap: true,
+              postcssOptions: {
+                plugins: [tailwindcss(), autoprefixer()],
+              },
             },
           },
           {
@@ -460,5 +475,19 @@ module.exports = {
     new CssoWebpackPlugin({
       forceMediaMerge: true,
     }),
+
+    // new UnpluginVueComponents({
+    //   PuikResolveroptions
+    // }),
+    // new UnpluginAutoImport({
+    //   PuikResolveroptions
+    // })
+    
+    // UnpluginVueComponents({
+    //   PuikResolveroptions
+    // }),
+    // UnpluginAutoImport({
+    //   PuikResolveroptions
+    // })
   ],
 };
