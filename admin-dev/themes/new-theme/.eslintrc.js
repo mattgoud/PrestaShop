@@ -101,6 +101,7 @@ module.exports = {
         'vue/html-closing-bracket-spacing': 0,
         'vue/no-v-for-template-key': 0,
         'vue/multi-word-component-names': 0,
+        'vue/no-v-model-argument': 'off',
       },
       extends: ['plugin:vue/strongly-recommended', '@vue/typescript'],
       plugins: ['vue', '@typescript-eslint'],
