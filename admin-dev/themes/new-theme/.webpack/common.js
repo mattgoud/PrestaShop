@@ -353,15 +353,6 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          'css-loader',
-        ],
-      },
-      {
         test: /\.scss$/,
         include: /scss/,
         use: [

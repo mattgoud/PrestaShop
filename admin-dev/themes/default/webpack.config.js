@@ -115,8 +115,7 @@ module.exports = (env, argv) => {
         extensions: ['woff2'],
         filter: /preload/,
         // eslint-disable-next-line
-        replaceCallback: ({indexSource, linksAsString}) =>
-          indexSource.replace('{{{preloadLinks}}}', linksAsString.replace(/href="/g, 'href="{$admin_dir}')),
+        replaceCallback: ({indexSource, linksAsString}) => indexSource.replace('{{{preloadLinks}}}', linksAsString.replace(/href="/g, 'href="{$admin_dir}')),
       }),
       new CssoWebpackPlugin({
         forceMediaMerge: true,
@@ -125,6 +124,7 @@ module.exports = (env, argv) => {
         outputFilename: 'thirdPartyNotice.json',
         licenseOverrides: {
           'vazirmatn@32.102.0': 'OFL-1.1',
+          '@prestashopcorp/puik-components@2.1.0': 'MIT',
         },
         replenishDefaultLicenseTexts: true,
       }),

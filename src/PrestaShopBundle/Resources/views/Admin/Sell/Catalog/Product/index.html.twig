@@ -29,7 +29,21 @@
   <link rel="stylesheet" href="{{ asset('themes/new-theme/public/product_catalog.css') }}" type="text/css" media="all">
 {% endblock %}
 
+
 {% block content %}
+
+  {% set columnHeaders = productGrid["columns"] %}
+  {% set dataRecords = productGrid["data"]["records"].all() %}
+
+  {% set dataProductGrid = {
+    'headers': columnHeaders,
+    'products': dataRecords,
+    } 
+  %}
+
+  {# {{ dump(dataProductGrid) }} #}
+  <div id="product-grid-vue" data-product-grid="{{ dataProductGrid|json_encode }}"></div>
+
   {% block products_listing %}
     {% include '@PrestaShop/Admin/Sell/Catalog/Product/Grid/grid_panel.html.twig' with {'grid': productGrid} %}
   {% endblock %}

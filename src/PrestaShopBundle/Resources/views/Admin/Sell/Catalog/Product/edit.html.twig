@@ -41,11 +41,19 @@
   {# Passed via data attribute only so that the iframe modal can replicate it in its redirection url #}
   {% set forceDefaultActive = productForm.vars.force_default_active %}
 
+{% set dataProductEdit = {
+    'productType': productType,
+    'productId': productId,
+    'shopId': shopId,
+    'forceDefaultActive': forceDefaultActive
+} %}
+
   <div class="header-toolbar d-print-none">
     {{ multistoreProductHeader(productId) }}
   </div>
 
-  <div id="test-vue">hello vue</div>
+{{dump()}}
+  <div id="product-edit-vue" data-product-edit="{{ dataProductEdit|json_encode }}"></div>
 
   {{ form_start(productForm, {'attr': {
     'class': 'form-horizontal product-page justify-content-md-center product-form',
