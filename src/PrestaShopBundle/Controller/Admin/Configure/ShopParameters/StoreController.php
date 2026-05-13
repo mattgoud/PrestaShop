@@ -248,6 +248,9 @@ class StoreController extends PrestaShopAdminController
         return $this->redirectToRoute('admin_stores_index');
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getErrorMessages(): array
     {
         return [
