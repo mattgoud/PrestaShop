@@ -436,7 +436,7 @@ class CartRuleCore extends ObjectModel
         $sql .= ')';
 
         // Then, conditions for date, voucher active property and total amount of vouchers in stock
-        $sql .= ' AND ((cr.date_from <= NOW() AND cr.date_to IS NULL) OR (NOW() BETWEEN cr.date_from AND cr.date_to))
+        $sql .= ' AND ((cr.date_from <= \'' . date('Y-m-d H:i:s') . '\' AND cr.date_to IS NULL) OR (\'' . date('Y-m-d H:i:s') . '\' BETWEEN cr.date_from AND cr.date_to))
             ' . ($active ? 'AND cr.`active` = 1' : '') . '
             ' . ($inStock ? 'AND (cr.`quantity` > 0 OR cr.`quantity` is null)' : '');
 
@@ -2041,7 +2041,7 @@ class CartRuleCore extends ObjectModel
 		WHERE cr.active = 1
 		AND cr.code = ""
 		AND (cr.quantity > 0 OR cr.quantity is null)
-		AND ((cr.date_from <= NOW() AND cr.date_to IS NULL) OR (NOW() BETWEEN cr.date_from AND cr.date_to))
+		AND ((cr.date_from <= \'' . date('Y-m-d H:i:s') . '\' AND cr.date_to IS NULL) OR (\'' . date('Y-m-d H:i:s') . '\' BETWEEN cr.date_from AND cr.date_to))
 		AND (
 			cr.id_customer = 0
 			' . (Validate::isLoadedObject($context->customer) ? 'OR cr.id_customer = ' . (int) $context->cart->id_customer : '') . '
